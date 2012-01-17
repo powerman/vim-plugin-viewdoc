@@ -30,11 +30,18 @@ if !exists('g:no_plugin_maps') && !exists('g:no_viewdoc_maps')
 	nmap <unique> <F1>	:call ViewDoc(expand("<cword>"))<CR>
 	nmap <unique> K		:call ViewDocMain(expand("<cword>"))<CR>
 endif
+if !exists('g:no_plugin_abbrev') && !exists('g:no_viewdoc_abbrev')
+	cabbrev <expr> help     getcmdline()=='help'    ? 'ViewDocVim'  : 'help'
+	cabbrev <expr> man      getcmdline()=='man'     ? 'ViewDocMan'  : 'man'
+	cabbrev <expr> doc      getcmdline()=='doc'     ? 'ViewDoc'	: 'doc'
+endif
 
 command -bang -nargs=+ -bar ViewDoc
 	\ if '<bang>'=='!' | call ViewDocMain(<f-args>) | else | call ViewDoc(<f-args>) | endif
 command -bang -nargs=1 -bar -complete=help ViewDocVim
 	\ if '<bang>'=='!' | call ViewDocMain(<f-args>,'vim') | else | call ViewDoc(<f-args>,'vim') | endif
+command -bang -nargs=1 -bar -complete=shellcmd ViewDocMan
+	\ if '<bang>'=='!' | call ViewDocMain(<f-args>,'sh') | else | call ViewDoc(<f-args>,'sh') | endif
 
 let s:bufname	= '[Doc]'
 let s:target	= { 'main': 0, 'scratch': 1, 'inplace': 2 }
@@ -151,6 +158,7 @@ function s:View(target, topic, ...)
 	silent $d
 	execute 'normal ' . (exists('h.line') ? h.line : 1) . 'G'
 	execute 'normal ' . (exists('h.col')  ? h.col  : 1) . '|'
+	normal zt
 	setlocal nomodifiable nomodified
 
 	execute 'setlocal ft=' . h.ft
