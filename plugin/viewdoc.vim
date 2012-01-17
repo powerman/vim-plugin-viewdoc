@@ -64,28 +64,26 @@ function ViewDocHandleMan(topic)
 	let m = matchlist(a:topic, '(\([0-9a-zA-Z]\+\))')
 	let sect = len(m) ? m[1] : ''
 	let name = substitute(a:topic, '(.*$', '', '')
-	return	{ 'cmd':	'man ' . sect . ' ' . shellescape(name) . ' | col -b 2>/dev/null',
+	return	{ 'cmd':	printf('man %s %s | col -b', sect, shellescape(name,1)),
 		\ 'ft':		'man',
 		\ }
 endfunction
 
 function ViewDocHandleHelp(topic)
-	let h = {}
+	let h = { 'ft':		'help',
+		\ 'iskeyword':	'!-~,^*,^\|,^\",192-255',
+		\ }
 	try
 		let savetabnr	= tabpagenr()
 		execute 'tab help ' . a:topic
 		let helpfile	= bufname(bufnr(''))
-		let h.cmd	= 'cat ' . shellescape(helpfile)
+		let h.cmd	= printf('cat %s', shellescape(helpfile,1))
 		let h.line	= line('.')
 		let h.col	= col('.')
-		let h.ft	= 'help'
-		let h.iskeyword = '!-~,^*,^\|,^\",192-255'
 		let h.tags	= substitute(helpfile, '/[^/]*$', '/tags', '')
 		tabclose
 		execute 'tabnext ' . savetabnr
 	catch
-		let h.cmd	= 'echo Sorry, no help for ' . shellescape(a:topic)
-		let h.ft	= 'txt'
 	endtry
 	return h
 endfunction
@@ -98,16 +96,14 @@ function ViewDocHandleFtHelp(topic)
 endfunction
 
 function ViewDocHandlePerl(topic)
-	let cmd = '	perldoc '	. shellescape(a:topic) . ' 2>/dev/null'
-	let cmd .= ' || perldoc -f '	. shellescape(a:topic) . ' 2>/dev/null'
-	let cmd .= ' || perldoc -v '	. shellescape(a:topic)
-	return	{ 'cmd':	cmd,
+	let t = shellescape(a:topic,1)
+	return	{ 'cmd':	printf('perldoc %s || perldoc -f %s || perldoc -v %s',t,t,t),
 		\ 'ft':		'perldoc',
 		\ }
 endfunction
 
 function ViewDocHandlePython(topic)
-	return	{ 'cmd':	'pydoc ' . shellescape(a:topic),
+	return	{ 'cmd':	printf('pydoc %s', shellescape(a:topic,1)),
 		\ 'ft':		'pydoc',
 		\ }
 endfunction
@@ -154,11 +150,13 @@ function s:View(target, topic, ...)
 
 	setlocal modifiable
 	silent 1,$d
-	execute 'silent 0r !' . h.cmd
-	silent $d
-	execute 'normal ' . (exists('h.line') ? h.line : 1) . 'G'
-	execute 'normal ' . (exists('h.col')  ? h.col  : 1) . '|'
-	normal zt
+	if exists('h.cmd')
+		execute 'silent 0r ! ( ' . h.cmd . ' ) 2>/dev/null'
+		silent $d
+		execute 'normal ' . (exists('h.line') ? h.line : 1) . 'G'
+		execute 'normal ' . (exists('h.col')  ? h.col  : 1) . '|'
+		normal zt
+	endif
 	setlocal nomodifiable nomodified
 
 	execute 'setlocal ft=' . h.ft
@@ -169,6 +167,10 @@ function s:View(target, topic, ...)
 		execute 'setlocal iskeyword=' . h.iskeyword
 	endif
 
+	if line('$') == 1 && col('$') == 1
+		redraw | echohl ErrorMsg | echo 'Sorry, no help for' a:topic | echohl None
+	endif
+	
 	inoremap <silent> <buffer> q		<C-O>:call <SID>CloseBuf()<CR>
 	nnoremap <silent> <buffer> q		:call <SID>CloseBuf()<CR>
 	vnoremap <silent> <buffer> q		<Esc>:call <SID>CloseBuf()<CR>
