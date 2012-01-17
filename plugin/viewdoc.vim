@@ -172,8 +172,14 @@ function s:View(target, topic, ...)
 	inoremap <silent> <buffer> q		<C-O>:call <SID>CloseBuf()<CR>
 	nnoremap <silent> <buffer> q		:call <SID>CloseBuf()<CR>
 	vnoremap <silent> <buffer> q		<Esc>:call <SID>CloseBuf()<CR>
+	inoremap <silent> <buffer> <C-]>	<C-O>:call <SID>Next()<CR>
+	inoremap <silent> <buffer> <C-T>	<C-O>:call <SID>Prev()<CR>
 	nnoremap <silent> <buffer> <C-]>	:call <SID>Next()<CR>
 	nnoremap <silent> <buffer> <C-T>	:call <SID>Prev()<CR>
+	imap <silent> <buffer> <CR>		<C-O><C-]>
+	imap <silent> <buffer> <BS>		<C-O><C-T>
+	nmap <silent> <buffer> <CR>		<C-]>
+	nmap <silent> <buffer> <BS>		<C-T>
 endfunction
 
 " let Fun = s:GetHandler()			auto-detect filetype and syntax
