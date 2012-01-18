@@ -1,6 +1,6 @@
 " Maintainer: Alex Efros <powerman-asdf@ya.ru>
 " Version: 0.9
-" Last Modified: Jan 17, 2012
+" Last Modified: Jan 18, 2012
 " License: This file is placed in the public domain.
 " URL: TODO
 " Description: Flexible viewer for any documentation (help/man/perldoc/etc.)
@@ -26,7 +26,7 @@ let s:re_mansect = '\([0-9n]p\?\)'
 
 """ Options
 if !exists('g:viewdoc_open')
-	let g:viewdoc_open='tabnew'	" 'topleft new', 'belowright vnew', 'tabnew', etc.
+	let g:viewdoc_open='tabnew'		" 'topleft new', 'belowright vnew', 'tabnew', etc.
 endif
 if !exists('g:viewdoc_only')
 	let g:viewdoc_only=0
@@ -35,7 +35,10 @@ if !exists('g:viewdoc_prevtabonclose')
 	let g:viewdoc_prevtabonclose=1
 endif
 if !exists('g:viewdoc_handlers')
-	let g:viewdoc_handlers = []	" see default handlers at end of this file
+	let g:viewdoc_handlers = []		" default handlers defined below
+endif
+if !exists('g:viewdoc_cmd_man')
+	let g:viewdoc_cmd_man='/usr/bin/man'	" user may want 'LANG= /usr/bin/man'
 endif
 
 """ Interface
@@ -109,16 +112,24 @@ endfunction
 " Autocomplete command:			tim	ti.*e
 " Autocomplete command in section:	2 tim	2 ti.*e
 function s:CompleteMan(ArgLead, CmdLine, CursorPos)
+	let manpath = substitute(system(printf('%s --path', g:viewdoc_cmd_man)),'\n$','','')
+	if manpath =~ ':'
+		let manpath = '{'.join(map(split(manpath,':'),'shellescape(v:val,1)'),',').'}'
+	else
+		let manpath = shellescape(manpath,1)
+	endif
 	if strpart(a:CmdLine, a:CursorPos - 1) == '('
 		let m = matchlist(a:CmdLine, '\s\(\S\+\)($')
 		if !len(m)
 			return ''
 		endif
-		return system('find /usr/share/man/man* -type f -regex ".*/"'.shellescape(m[1],1).'"\.[0-9n]p?\(\.bz2\|\.gz\)?" -printf "%f\n" 2>/dev/null | sed "s/\.bz2$\|\.gz$//;s/.*\///;s/\.\([^.]\+\)$/(\1)/"')
+		return system(printf('find %s/man* -type f -regex ".*/"%s"\.[0-9n]p?\(\.bz2\|\.gz\)?" -printf "%%f\n" 2>/dev/null | sed "s/\.bz2$\|\.gz$//;s/.*\///;s/\.\([^.]\+\)$/(\1)/"',
+			\ manpath, shellescape(m[1],1)))
 	else
 		let m = matchlist(a:CmdLine, '\s'.s:re_mansect.'\s')
 		let sect = len(m) ? m[1] : '*'
-		return system('find /usr/share/man/man'.sect.' -type f -not -name "*.3pm" -printf "%f\n" 2>/dev/null | sed "s/\.bz2$\|\.gz$//;s/\.[^.]*$//" | sort -u')
+		return system(printf('find %s/man%s -type f -printf "%%f\n" 2>/dev/null | sed "s/\.bz2$\|\.gz$//;s/\.[^.]*$//" | sort -u',
+			\ manpath, sect))
 	endif
 endfunction
 " let h = ViewDocHandleMan('time')
@@ -137,7 +148,7 @@ function ViewDocHandleMan(topic)
 		let sect = m[1]
 		let name = substitute(name, '^'.s:re_mansect.'\s\+', '', '')
 	endif
-	return	{ 'cmd':	printf('man %s %s | col -b', sect, shellescape(name,1)),
+	return	{ 'cmd':	printf('%s %s %s | col -b', g:viewdoc_cmd_man, sect, shellescape(name,1)),
 		\ 'ft':		'man',
 		\ }
 endfunction
