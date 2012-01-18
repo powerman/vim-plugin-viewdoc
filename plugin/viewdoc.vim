@@ -2,7 +2,7 @@
 " Version: 1.0
 " Last Modified: Jan 18, 2012
 " License: This file is placed in the public domain.
-" URL: TODO
+" URL: http://www.vim.org/scripts/script.php?script_id=3893
 " Description: Flexible viewer for any documentation (help/man/perldoc/etc.)
 
 if exists('g:loaded_viewdoc') || &cp || version < 700
