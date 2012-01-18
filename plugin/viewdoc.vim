@@ -1,12 +1,9 @@
 " Maintainer: Alex Efros <powerman-asdf@ya.ru>
-" Version: 0.9
+" Version: 1.0
 " Last Modified: Jan 18, 2012
 " License: This file is placed in the public domain.
 " URL: TODO
 " Description: Flexible viewer for any documentation (help/man/perldoc/etc.)
-" TODO Test/include(?) resources from other plugins (docs in help format, syntax highlight).
-" TODO Add documentation, including this example:
-"	function man() { vim -c "ViewDocMan $*" -c tabonly; }
 
 if exists('g:loaded_viewdoc') || &cp || version < 700
 	finish

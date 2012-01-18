@@ -72,5 +72,3 @@ function g:ViewDoc_help_custom(topic, ft, ...)
 	return h
 endfunction
 
-let g:ViewDoc_css = function('g:ViewDoc_help_custom')
-
