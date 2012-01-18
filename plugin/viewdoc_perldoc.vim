@@ -4,6 +4,8 @@
 " License:		see in viewdoc.vim
 " URL:			see in viewdoc.vim
 " Description: ViewDoc handler for perldoc
+" TODO Add auto-detection based on context/syntax.
+" TODO Add command 'perldoc' with auto-complete.
 
 if exists('g:loaded_viewdoc_perldoc') || &cp || version < 700
 	finish

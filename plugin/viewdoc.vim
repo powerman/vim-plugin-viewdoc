@@ -4,8 +4,7 @@
 " License: This file is placed in the public domain.
 " URL: TODO
 " Description: Flexible viewer for any documentation (help/man/perldoc/etc.)
-" TODO Get and test resources from other plugins (doc in help format,
-"	syntax highlight).
+" TODO Test/include(?) resources from other plugins (docs in help format, syntax highlight).
 " TODO Add documentation, including this example:
 "	function man() { vim -c "ViewDocMan $*" -c tabonly; }
 
@@ -70,6 +69,9 @@ function ViewDoc(target, topic, ...)
 	if exists('h.tags')
 		execute 'setlocal tags^=' . h.tags
 	endif
+	if exists('h.docft')
+		let b:docft = h.docft
+	endif
 
 	if line('$') == 1 && col('$') == 1
 		redraw | echohl ErrorMsg | echo 'Sorry, no doc for' h.topic | echohl None
@@ -95,11 +97,12 @@ endfunction
 " let h = s:GetHandle('query', 'perl')		no auto-detect
 " Return: {
 "	'topic':	'query',		ALWAYS
-"	'ft':		'man',			ALWAYS
+"	'ft':		'perldoc',		ALWAYS
 "	'cmd':		'cat /path/to/file',	OPTIONAL
 "	'line':		1,			OPTIONAL
 "	'col':		1,			OPTIONAL
 "	'tags':		'/path/to/tags',	OPTIONAL
+"	'docft':	'perl',			OPTIONAL
 " }
 function s:GetHandle(topic, ft)
 	let cword = a:topic == '<cword>'
@@ -116,9 +119,10 @@ endfunction
 
 " Emulate doc stack a-la tag stack (<C-]> and <C-T>)
 function s:Next()
-	let b:stack = exists('b:stack') ? b:stack + 1 : 1
+	let b:stack = exists('b:stack') ? b:stack + 1	: 1
+	let docft   = exists('b:docft') ? b:docft	: &ft
 	normal msHmt`s
-	call ViewDoc('inplace', '<cword>')
+	call ViewDoc('inplace', '<cword>', docft)
 endfunction
 
 function s:Prev()
