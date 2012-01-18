@@ -4,7 +4,6 @@
 " License: This file is placed in the public domain.
 " URL: TODO
 " Description: Flexible viewer for any documentation (help/man/perldoc/etc.)
-" FIXME Prev() is buggy when different doc types open in same [Doc]
 " TODO Get and test resources from other plugins (doc in help format,
 "	syntax highlight).
 " TODO Add documentation, including this example:
@@ -53,6 +52,7 @@ function ViewDoc(target, topic, ...)
 
 	if a:target != 'inplace'
 		call s:OpenBuf(a:target)
+		let b:stack = 0
 	endif
 
 	setlocal modifiable
