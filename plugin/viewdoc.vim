@@ -4,15 +4,10 @@
 " License: This file is placed in the public domain.
 " URL: TODO
 " Description: Flexible viewer for any documentation (help/man/perldoc/etc.)
-" TODO Check idea about using syntax for detecting doc source.
-" TODO Check correct &ft value for perldoc and pydoc - if it 'txt', then
-"	store original &ft (and syntax) in b:something and use it to
-"	lookup next doc inside this 'txt'.
-" TODO Rethink handlers architecture.
 " TODO Move some things (like iskeyword for help) from ~/.vimrc to
 "	ftplugin/ here).
 " TODO Add documentation, including this example:
-"	function man() { vi -c "ViewDocMan $*" -c tabonly; }
+"	function man() { vim -c "ViewDocMan $*" -c tabonly; }
 
 if exists('g:loaded_viewdoc') || &cp || version < 700
 	finish
@@ -35,7 +30,7 @@ if !exists('g:viewdoc_prevtabonclose')
 	let g:viewdoc_prevtabonclose=1
 endif
 if !exists('g:viewdoc_handlers')
-	let g:viewdoc_handlers = []		" default handlers defined below
+	let g:viewdoc_handlers = {}		" default handlers defined below
 endif
 if !exists('g:viewdoc_cmd_man')
 	let g:viewdoc_cmd_man='/usr/bin/man'	" user may want 'LANG= /usr/bin/man'
@@ -57,16 +52,16 @@ if !exists('g:no_plugin_abbrev') && !exists('g:no_viewdoc_abbrev')
 endif
 " - map
 if !exists('g:no_plugin_maps') && !exists('g:no_viewdoc_maps')
-	imap <unique> <F1>	<C-O>:call ViewDoc('new', expand('<cword>'))<CR>
-	nmap <unique> <F1>	:call ViewDoc('new', expand('<cword>'))<CR>
-	nmap <unique> K		:call ViewDoc('doc', expand('<cword>'))<CR>
+	imap <unique> <F1>	<C-O>:call ViewDoc('new', '<cword>')<CR>
+	nmap <unique> <F1>	:call ViewDoc('new', '<cword>')<CR>
+	nmap <unique> K		:call ViewDoc('doc', '<cword>')<CR>
 endif
 " - function
 " call ViewDoc('doc', 'bash')
+" call ViewDoc('new', '<cword>')
 " call ViewDoc('new', ':execute', 'help')
 function ViewDoc(target, topic, ...)
-	let Fun = call('s:GetHandler', a:000)
-	let h	= Fun(a:topic)
+	let h = s:GetHandle(a:topic, a:0 > 0 ? a:1 : &ft)
 
 	if a:target != 'inplace'
 		call s:OpenBuf(a:target)
@@ -85,11 +80,11 @@ function ViewDoc(target, topic, ...)
 
 	execute 'setlocal ft=' . h.ft
 	if exists('h.tags')
-		execute 'setlocal tags+=' . h.tags
+		execute 'setlocal tags^=' . h.tags
 	endif
 
 	if line('$') == 1 && col('$') == 1
-		redraw | echohl ErrorMsg | echo 'Sorry, no doc for' a:topic | echohl None
+		redraw | echohl ErrorMsg | echo 'Sorry, no doc for' h.topic | echohl None
 	endif
 
 	inoremap <silent> <buffer> q		<C-O>:call <SID>CloseBuf()<CR>
@@ -135,7 +130,7 @@ endfunction
 " let h = ViewDocHandleMan('time')
 " let h = ViewDocHandleMan('time(2)')
 " let h = ViewDocHandleMan('2 time')
-function ViewDocHandleMan(topic)
+function ViewDocHandleMan(topic, ...)
 	let sect = ''
 	let name = a:topic
 	let m = matchlist(name, '('.s:re_mansect.')$')
@@ -148,12 +143,12 @@ function ViewDocHandleMan(topic)
 		let sect = m[1]
 		let name = substitute(name, '^'.s:re_mansect.'\s\+', '', '')
 	endif
-	return	{ 'cmd':	printf('%s %s %s | col -b', g:viewdoc_cmd_man, sect, shellescape(name,1)),
+	return	{ 'cmd':	printf('%s %s %s | sed "s/ \xB7 / * /" | col -b', g:viewdoc_cmd_man, sect, shellescape(name,1)),
 		\ 'ft':		'man',
 		\ }
 endfunction
 " - help
-function ViewDocHandleHelp(topic)
+function ViewDocHandleHelp(topic, ...)
 	let h = { 'ft':		'help',
 		\ }
 	try
@@ -170,62 +165,67 @@ function ViewDocHandleHelp(topic)
 	endtry
 	return h
 endfunction
-function ViewDocHandleFtHelp(topic)
+function ViewDocHandleFtHelp(topic, ...)
 	for p in split(globpath(&runtimepath, 'ftdoc/css'))
 		execute 'setlocal runtimepath^=' . p
 	endfor
 	return ViewDocHandleHelp(a:topic)
 endfunction
 " - perl
-function ViewDocHandlePerl(topic)
+function ViewDocHandlePerl(topic, ...)
 	let t = shellescape(a:topic,1)
 	return	{ 'cmd':	printf('perldoc %s || perldoc -f %s || perldoc -v %s',t,t,t),
 		\ 'ft':		'perldoc',
 		\ }
 endfunction
 " - python
-function ViewDocHandlePython(topic)
+function ViewDocHandlePython(topic, ...)
 	return	{ 'cmd':	printf('pydoc %s', shellescape(a:topic,1)),
 		\ 'ft':		'pydoc',
 		\ }
 endfunction
 " - setup handlers
-let g:viewdoc_handlers += [
-	\ ['man',	'',	function('ViewDocHandleMan')],
-	\ ['help',	'',	function('ViewDocHandleHelp')],
-	\ ['vim',	'',	function('ViewDocHandleHelp')],
-	\ ['perl',	'',	function('ViewDocHandlePerl')],
-	\ ['python',	'',	function('ViewDocHandlePython')],
-	\ ['css',	'',	function('ViewDocHandleFtHelp')],
-	\ ]
-let g:ViewDocHandleDefault = function('ViewDocHandleMan')
+let g:viewdoc_handlers.DEFAULT	= function('ViewDocHandleMan')
+let g:viewdoc_handlers.man	= function('ViewDocHandleMan')
+let g:viewdoc_handlers.help	= function('ViewDocHandleHelp')
+let g:viewdoc_handlers.vim	= function('ViewDocHandleHelp')
+let g:viewdoc_handlers.perl	= function('ViewDocHandlePerl')
+let g:viewdoc_handlers.python	= function('ViewDocHandlePython')
+let g:viewdoc_handlers.css	= function('ViewDocHandleFtHelp')
 
 
 """
 """ Internal
 """
 
-" let Fun = s:GetHandler()			auto-detect filetype and syntax
-" let Fun = s:GetHandler('filetype')		auto-detect only syntax
-" let Fun = s:GetHandler('filetype', 'Syntax')	no auto-detect
-" Return: Funcref to best handler for given filetype and syntax.
-function s:GetHandler(...)
-	let ft	= a:0 > 0 ? a:1 : &ft
-	let syn = a:0 > 1 ? a:2 : synIDattr(synID(line('.'),col('.'),0) ,'name')
+" let h = s:GetHandle('<cword>', 'perl')	auto-detect syntax
+" let h = s:GetHandle('query', 'perl')		no auto-detect
+" Return: {
+"	'topic':	'query',		ALWAYS
+"	'ft':		'man',			ALWAYS
+"	'cmd':		'cat /path/to/file',	OPTIONAL
+"	'line':		1,			OPTIONAL
+"	'col':		1,			OPTIONAL
+"	'tags':		'/path/to/tags',	OPTIONAL
+" }
+function s:GetHandle(topic, ft)
+	let cword = a:topic == '<cword>'
+	let topic = cword ? expand('<cword>')		: a:topic
+	let synid = cword ? synID(line('.'),col('.'),1)	: 0
 
-	for [filetype,synregex,Fun] in g:viewdoc_handlers
-		if ft == filetype && syn =~? synregex
-			return Fun
-		endif
-	endfor
-	return g:ViewDocHandleDefault
+	let F = g:viewdoc_handlers[ exists('g:viewdoc_handlers.'.a:ft) ? a:ft : 'DEFAULT' ]
+	let h = F(topic, a:ft, synid, cword)
+
+	let h.topic	= exists('h.topic')	? h.topic	: topic
+	let h.ft	= exists('h.ft')	? h.ft		: a:ft
+	return h
 endfunction
 
 " Emulate doc stack a-la tag stack (<C-]> and <C-T>)
 function s:Next()
 	let b:stack = exists('b:stack') ? b:stack + 1 : 1
 	normal msHmt`s
-	call ViewDoc('inplace', expand('<cword>'))
+	call ViewDoc('inplace', '<cword>')
 endfunction
 
 function s:Prev()
