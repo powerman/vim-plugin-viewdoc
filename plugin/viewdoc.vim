@@ -4,8 +4,9 @@
 " License: This file is placed in the public domain.
 " URL: TODO
 " Description: Flexible viewer for any documentation (help/man/perldoc/etc.)
-" TODO Move some things (like iskeyword for help) from ~/.vimrc to
-"	ftplugin/ here).
+" FIXME Prev() is buggy when different doc types open in same [Doc]
+" TODO Get and test resources from other plugins (doc in help format,
+"	syntax highlight).
 " TODO Add documentation, including this example:
 "	function man() { vim -c "ViewDocMan $*" -c tabonly; }
 
@@ -17,7 +18,6 @@ let g:loaded_viewdoc = 1
 
 """ Constants
 let s:bufname = '[Doc]'
-let s:re_mansect = '\([0-9n]p\?\)'
 
 """ Options
 if !exists('g:viewdoc_open')
@@ -29,26 +29,14 @@ endif
 if !exists('g:viewdoc_prevtabonclose')
 	let g:viewdoc_prevtabonclose=1
 endif
-if !exists('g:viewdoc_handlers')
-	let g:viewdoc_handlers = {}		" default handlers defined below
-endif
-if !exists('g:viewdoc_cmd_man')
-	let g:viewdoc_cmd_man='/usr/bin/man'	" user may want 'LANG= /usr/bin/man'
-endif
 
 """ Interface
 " - command
-command -bar -bang -nargs=1 -complete=custom,s:CompleteMan ViewDocMan
-	\ call ViewDoc('<bang>'=='' ? 'new' : 'doc', <f-args>, 'man')
-command -bar -bang -nargs=1 -complete=help ViewDocHelp
-	\ call ViewDoc('<bang>'=='' ? 'new' : 'doc', <f-args>, 'help')
 command -bar -bang -nargs=+ ViewDoc
 	\ call ViewDoc('<bang>'=='' ? 'new' : 'doc', <f-args>)
 " - abbrev
 if !exists('g:no_plugin_abbrev') && !exists('g:no_viewdoc_abbrev')
-	cabbrev <expr> man      getcmdline()=='man'     ? 'ViewDocMan'  : 'man'
-	cabbrev <expr> help     getcmdline()=='help'    ? 'ViewDocHelp' : 'help'
-	cabbrev <expr> doc      getcmdline()=='doc'     ? 'ViewDoc'	: 'doc'
+	cabbrev <expr> doc      getcmdtype()==':' && getcmdline()=='doc'  ? 'ViewDoc'	  : 'doc'
 endif
 " - map
 if !exists('g:no_plugin_maps') && !exists('g:no_viewdoc_maps')
@@ -57,9 +45,9 @@ if !exists('g:no_plugin_maps') && !exists('g:no_viewdoc_maps')
 	nmap <unique> K		:call ViewDoc('doc', '<cword>')<CR>
 endif
 " - function
-" call ViewDoc('doc', 'bash')
-" call ViewDoc('new', '<cword>')
-" call ViewDoc('new', ':execute', 'help')
+" call ViewDoc('new', '<cword>')		auto-detect context/syntax and file type
+" call ViewDoc('doc', 'bash')			auto-detect only file type
+" call ViewDoc('new', ':execute', 'help')	no auto-detect
 function ViewDoc(target, topic, ...)
 	let h = s:GetHandle(a:topic, a:0 > 0 ? a:1 : &ft)
 
@@ -101,102 +89,7 @@ function ViewDoc(target, topic, ...)
 endfunction
 
 
-""" Handlers
-" - man
-" Autocomplete section:			time(	ti.*(
-" Autocomplete command:			tim	ti.*e
-" Autocomplete command in section:	2 tim	2 ti.*e
-function s:CompleteMan(ArgLead, CmdLine, CursorPos)
-	let manpath = substitute(system(printf('%s --path', g:viewdoc_cmd_man)),'\n$','','')
-	if manpath =~ ':'
-		let manpath = '{'.join(map(split(manpath,':'),'shellescape(v:val,1)'),',').'}'
-	else
-		let manpath = shellescape(manpath,1)
-	endif
-	if strpart(a:CmdLine, a:CursorPos - 1) == '('
-		let m = matchlist(a:CmdLine, '\s\(\S\+\)($')
-		if !len(m)
-			return ''
-		endif
-		return system(printf('find %s/man* -type f -regex ".*/"%s"\.[0-9n]p?\(\.bz2\|\.gz\)?" -printf "%%f\n" 2>/dev/null | sed "s/\.bz2$\|\.gz$//;s/.*\///;s/\.\([^.]\+\)$/(\1)/"',
-			\ manpath, shellescape(m[1],1)))
-	else
-		let m = matchlist(a:CmdLine, '\s'.s:re_mansect.'\s')
-		let sect = len(m) ? m[1] : '*'
-		return system(printf('find %s/man%s -type f -printf "%%f\n" 2>/dev/null | sed "s/\.bz2$\|\.gz$//;s/\.[^.]*$//" | sort -u',
-			\ manpath, sect))
-	endif
-endfunction
-" let h = ViewDocHandleMan('time')
-" let h = ViewDocHandleMan('time(2)')
-" let h = ViewDocHandleMan('2 time')
-function ViewDocHandleMan(topic, ...)
-	let sect = ''
-	let name = a:topic
-	let m = matchlist(name, '('.s:re_mansect.')$')
-	if (len(m))
-		let sect = m[1]
-		let name = substitute(name, '('.s:re_mansect.')$', '', '')
-	endif
-	let m = matchlist(name, '^'.s:re_mansect.'\s\+')
-	if (len(m))
-		let sect = m[1]
-		let name = substitute(name, '^'.s:re_mansect.'\s\+', '', '')
-	endif
-	return	{ 'cmd':	printf('%s %s %s | sed "s/ \xB7 / * /" | col -b', g:viewdoc_cmd_man, sect, shellescape(name,1)),
-		\ 'ft':		'man',
-		\ }
-endfunction
-" - help
-function ViewDocHandleHelp(topic, ...)
-	let h = { 'ft':		'help',
-		\ }
-	try
-		let savetabnr	= tabpagenr()
-		execute 'tab help ' . a:topic
-		let helpfile	= bufname(bufnr(''))
-		let h.cmd	= printf('cat %s', shellescape(helpfile,1))
-		let h.line	= line('.')
-		let h.col	= col('.')
-		let h.tags	= substitute(helpfile, '/[^/]*$', '/tags', '')
-		tabclose
-		execute 'tabnext ' . savetabnr
-	catch
-	endtry
-	return h
-endfunction
-function ViewDocHandleFtHelp(topic, ...)
-	for p in split(globpath(&runtimepath, 'ftdoc/css'))
-		execute 'setlocal runtimepath^=' . p
-	endfor
-	return ViewDocHandleHelp(a:topic)
-endfunction
-" - perl
-function ViewDocHandlePerl(topic, ...)
-	let t = shellescape(a:topic,1)
-	return	{ 'cmd':	printf('perldoc %s || perldoc -f %s || perldoc -v %s',t,t,t),
-		\ 'ft':		'perldoc',
-		\ }
-endfunction
-" - python
-function ViewDocHandlePython(topic, ...)
-	return	{ 'cmd':	printf('pydoc %s', shellescape(a:topic,1)),
-		\ 'ft':		'pydoc',
-		\ }
-endfunction
-" - setup handlers
-let g:viewdoc_handlers.DEFAULT	= function('ViewDocHandleMan')
-let g:viewdoc_handlers.man	= function('ViewDocHandleMan')
-let g:viewdoc_handlers.help	= function('ViewDocHandleHelp')
-let g:viewdoc_handlers.vim	= function('ViewDocHandleHelp')
-let g:viewdoc_handlers.perl	= function('ViewDocHandlePerl')
-let g:viewdoc_handlers.python	= function('ViewDocHandlePython')
-let g:viewdoc_handlers.css	= function('ViewDocHandleFtHelp')
-
-
-"""
 """ Internal
-"""
 
 " let h = s:GetHandle('<cword>', 'perl')	auto-detect syntax
 " let h = s:GetHandle('query', 'perl')		no auto-detect
@@ -213,8 +106,8 @@ function s:GetHandle(topic, ft)
 	let topic = cword ? expand('<cword>')		: a:topic
 	let synid = cword ? synID(line('.'),col('.'),1)	: 0
 
-	let F = g:viewdoc_handlers[ exists('g:viewdoc_handlers.'.a:ft) ? a:ft : 'DEFAULT' ]
-	let h = F(topic, a:ft, synid, cword)
+	let handler = exists('*g:ViewDoc_{a:ft}') ? a:ft : 'DEFAULT'
+	let h = g:ViewDoc_{handler}(topic, a:ft, synid, cword)
 
 	let h.topic	= exists('h.topic')	? h.topic	: topic
 	let h.ft	= exists('h.ft')	? h.ft		: a:ft
