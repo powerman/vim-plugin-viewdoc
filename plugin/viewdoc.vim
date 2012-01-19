@@ -89,7 +89,11 @@ function ViewDoc(target, topic, ...)
 
 	if line('$') == 1 && col('$') == 1
 		if !g:viewdoc_openempty
-			normal q
+			if a:target == 'inplace'
+				call s:Prev()
+			else
+				call s:CloseBuf()
+			endif
 		endif
 		redraw | echohl ErrorMsg | echo 'Sorry, no doc for' h.topic | echohl None
 	endif
@@ -137,6 +141,11 @@ function s:Prev()
 		undo
 		setlocal nomodifiable
 		normal 'tzt`s
+		" XXX man page syntax _partially_ switched off after Prev(),
+		" I've no idea why this happens, so just force it again
+		if exists('g:syntax_on')
+			syntax on
+		endif
 	endif
 endfunction
 
