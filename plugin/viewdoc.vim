@@ -1,6 +1,6 @@
 " Maintainer: Alex Efros <powerman-asdf@ya.ru>
 " Version: 1.0
-" Last Modified: Jan 18, 2012
+" Last Modified: Jan 19, 2012
 " License: This file is placed in the public domain.
 " URL: http://www.vim.org/scripts/script.php?script_id=3893
 " Description: Flexible viewer for any documentation (help/man/perldoc/etc.)

@@ -33,7 +33,7 @@ file type inside Vim in easy to use, consistent, smart and configurable way.
 
  * You can configure where (buffer/window/tab) documentation will be open.
    Can open new docs in one dedicated (<K>) or new (<F1>) buffer/window/tab. 
-   Support all work styles:
+   Support all work styles (see |viewdoc-settings-examples|):
 
    - full screen (no tabs, one window, open files/docs are in hidden buffers), 
    - windowed (no tabs, many windows with open files/docs), 
@@ -172,96 +172,136 @@ Added by help handler:~
 ==============================================================================
 SETTINGS					*viewdoc-settings*
 
-						*g:viewdoc_open*
-You can control where documentation will be opened by choosing command used
-to open new window/tab: >
-
-    let g:viewdoc_open='tabnew'
-    let g:viewdoc_open='topleft new'
-    let g:viewdoc_open='belowright vnew'
-
-You can use any similar commands supported by Vim. Default is "tabnew".
-
-						*g:viewdoc_only*
-Next, if you open documentation in window (|g:viewdoc_open|!="tabnew"),
-you can force this window to be "only" window in current tab: >
-
-    let g:viewdoc_only=1
-
-Default is 0.
-
-						*g:viewdoc_prevtabonclose*
-If you open documentation in new tab (|g:viewdoc_open|=="tabnew"), then when
-you close that tab Vim by default will move to next tab. To move to previous
-tab instead: >
-
-    let g:viewdoc_prevtabonclose=1
-
-Default is 1.
-
-						*g:viewdoc_man_cmd*
-Added by |ViewDoc_man| handler, should contain command to run `man`. You may
-wanna change it, for ex. to force English manuals: >
-
-    let g:viewdoc_man_cmd='LANG= /usr/bin/man'
-<
-Default is '/usr/bin/man'.
+General:~
 
 g:no_viewdoc_abbrev				*g:no_viewdoc_abbrev* 
 g:no_plugin_abbrev
-	Set any of these variables to disable abbrev |:help|,
-	|:man|, |:doc|.
+	Set any of these variables to disable abbrev |:help|, |:man|, |:doc|.
 
 g:no_viewdoc_maps				*g:no_viewdoc_maps* 
 g:no_plugin_maps
 	Set any of these variables to disable mapping <K>, <F1>.
 
+g:viewdoc_open		="tabnew" (default)	*g:viewdoc_open*
+			="topleft new"
+			="belowright vnew"
+	Control where documentation will be open by choosing Vim command used
+	to open new window/tab. You can use any similar commands supported by
+	Vim. New documentation buffer will be opened using: >
+	    execute g:viewdoc_open	    " to create new [Scratch] buffer
+	    execute g:viewdoc_open [Doc]    " to create new [Doc] buffer
+
+g:viewdoc_only		=0 (default)		*g:viewdoc_only*
+			=1
+	If you open documentation in window (|g:viewdoc_open|!="tabnew"), you
+	can force this window to be the "only" window in current tab by
+	changing this variable to True value.
+
+g:viewdoc_prevtabonclose=1 (default)		*g:viewdoc_prevtabonclose*
+			=0
+	If you open documentation in new tab (|g:viewdoc_open|=="tabnew"),
+	then when you close that tab Vim by default will move to next tab.
+	This plugin by default change this behaviour to move to previous tab.
+	If you like original behaviour set this variable to False.
+
+Added by man handler:~
+
+g:viewdoc_man_cmd   ="/usr/bin/man" (default)   *g:viewdoc_man_cmd*
+	Should contain command to run `man`. You may wanna change it, for ex.
+	to force English manuals: >
+	    let g:viewdoc_man_cmd='LANG= /usr/bin/man'
+<
+						*viewdoc-settings-examples*
+Example configuration: full screen~
+ * no tabs
+ * one window
+ * other open files/docs are in hidden buffers
+ * navigation between files/docs: |:bn| and |:bp|, close: |:bd| >
+    let g:viewdoc_open='new'
+    let g:viewdoc_only=1
+
+Example configuration: windowed~
+ * no tabs
+ * many windows with open files/docs
+ * navigation/close: CTRL-W something >
+    let g:viewdoc_open='topleft new'
+
+Example configuration: tabbed full screen~
+ * many tabs
+ * each with one window
+ * open files/docs are in different tabs >
+    " this is default configuration
+
+Example configuration: tabbed~
+ * many tabs with many windows inside tabs >
+    " same as in windowed example above
+
 ==============================================================================
 FUNCTIONS					*viewdoc-functions*
 
-						*ViewDoc()*
->
-    :call ViewDoc('new', '<cword>')
-    :call ViewDoc('new', 'topic')
-    :call ViewDoc('doc', 'topic', 'filetype')
+This plugin provide global function ViewDoc() and many ViewDoc_{filetype}()
+functions, but only |ViewDoc()| function may be called by user (other
+functions are documentation handlers called internally by |ViewDoc()|).
 
-Using "new" in first param is same as run |:doc|, using "doc" is same as |:doc!|.
+ViewDoc({target}, {topic}, {filetype})		*ViewDoc()*
+ViewDoc({target}, {topic})
+ViewDoc({target}, '<cword>', {filetype})
+ViewDoc({target}, '<cword>')
+	This function handle all |viewdoc-commands|.
+
+	{target} can be "new" or "doc".
+	If it "new", then documentation will be open in new [Scratch] buffer.
+	If it "doc", then documentation will be open in existing [Doc] buffer
+	(new [Doc] buffer will be created if it doesn't exists yet).
+	Using {target}=="doc" is same as using |viewdoc-commands| with [!].
+
+	Other parameters documented in |:ViewDoc|.
 
 ==============================================================================
 HANDLERS					*viewdoc-handlers*
 
-To add documentation handler for new {filetype} it's should to create one
-function in ~/.vimrc or separate plugin: >
+						*ViewDoc_{filetype}()*
+To add documentation handler for new {filetype} it's enough to create one
+function in ~/.vimrc (or some plugin): >
 
-    ViewDoc_{filetime}(topic, filetype, synid, have_context)
+    ViewDoc_{filetype}(topic, filetype, synid, have_context)
 <
-That function will get 4 parameters:
+This function will receive 4 parameters:
 
- * topic	    which documentation needed
+topic		Requested documentation topic ({topic} or <cword> param for
+		|:ViewDoc|, if it was <cword> then it will be replaced with
+		expand("<cword>") before calling this function).
 
- * filetype	    usually same as {filetype}, unless you're using same
-		    function for many {filetype}
+filetype	Requested documentation type ({filetype} param for
+		|:ViewDoc| or 'ft' if {filetype} param wasn't used).
+		Usually will be same as in this function's name, unless you've
+		used same function for several file type, like: >
+		    function g:ViewDoc_sh(topic, ...) | ... | endfunction
+		    let g:ViewDoc_tcsh = function('g:ViewDoc_sh')
 
- * synid	    syntax id as returned by synID() if we've context or 0 if
-		    we don't have context
+synid		Syntax id for requested topic as returned by |synID()|.
+		Can be non-zero only if |:ViewDoc| was called with <cword>.
 
- * have_context	    true if we've context (and so can check syntax name for
-		    requested topic or even surrounding text); will be true
-		    only when |:ViewDoc| / |ViewDoc()| / |:ViewDocMan| / etc.
-		    called with <cword> instead of static {topic}
+have_context	True if we've context (|:ViewDoc| was called with <cword>).
+		If true, then this function may try to analyse topic context,
+		like surrounding symbols which wasn't included in topic param.
 
-It should return Dictionary with these keys (all optional): >
+Examples of calling documentation handler functions:
+    1) User press <F1> on word "test" in file "script.sh": >
+	    call ViewDoc_man('test', 'sh', 353, 1)
+<   2) User run command ":help local-additions" >
+	    call ViewDoc_help('local-additions', 'help', 0, 0)
 
-    {
-      'topic':		'query',
-      'ft':		'perldoc',
-      'cmd':		'cat /path/to/file',
-      'line':		1,
-      'col':		1,
-      'tags':		'/path/to/tags',
-      'docft':		'perl',
-    }
-<
+This function must return Dictionary with these keys (all optional): >
+
+    'topic':	String  modified topic, needed if your altered original topic
+    'cmd':	String  shell command which should output doc for topic
+    'ft':	String  file type for command output
+    'line':	Number  position to move cursor after opening doc
+    'col':	Number  position to move cursor after opening doc
+    'tags':	String  path to file with tags for this doc
+    'docft':	String  file type for navigating with <C-]> inside this doc
+
 For example, here is implementation of |ViewDoc_pydoc| handler: >
 
     function g:ViewDoc_pydoc(topic, ...)
@@ -270,25 +310,23 @@ For example, here is implementation of |ViewDoc_pydoc| handler: >
 		    \ }
     endfunction
     let g:ViewDoc_python = function('g:ViewDoc_pydoc')
-<
 
 ------------------------------------------------------------------------------
 Handler: DEFAULT				*ViewDoc_DEFAULT*
 
-If there is no handler for current filetype |ViewDoc_man| handler will be used.
-To change default handler to, for ex., |ViewDoc_help| - add to ~/.vimrc: >
+If there is no handler for current filetype then |ViewDoc_man| will be used.
+To change default handler to, for ex., |ViewDoc_help|, add to ~/.vimrc: >
 
     autocmd VimEnter * let g:ViewDoc_DEFAULT = function('g:ViewDoc_help')
-<
 
 ------------------------------------------------------------------------------
 Handler: man					*ViewDoc_man*
 
-Show doc using `man` command when {filetype} is "sh" or "man".
+Show doc using |g:viewdoc_man_cmd| command when {filetype} is "sh" or "man".
 Also used as default handler, see |ViewDoc_DEFAULT|.
 
-Add commands |:man| and |:ViewDocMan|.
-Add setting |g:viewdoc_man_cmd|.
+Added commands: |:man| |:ViewDocMan|.
+Added settings: |g:viewdoc_man_cmd|.
 
 To view man pages in Vim from console add this to ~/.bashrc: >
 
@@ -302,31 +340,32 @@ Show standard Vim help when {filetype} is "vim" or "help".
 Viewing Vim help using this plugin have advantage in better control how and
 where help window will be opened (and, of course, in closing help with <q>).
 
-Add commands |:help| and |:ViewDocHelp| (behaviour of these commands is
-exactly same as for standard Vim |:help| command).
+Added commands: |:help| |:ViewDocHelp|.
 
 ------------------------------------------------------------------------------
 Handler: help_custom				*ViewDoc_help_custom*
 
 Show doc for any {filetype} using separate .txt files written in Vim help
-format and stored in directory ~/.vim/doc/{filetype}/
+format and stored in directory 'runtimepath'/doc/{filetype}/ (no such help
+files provided with this plugin, you should download or write them yourself).
 
 Examples of external docs which can be used with this handler:
 
  * CSS 2.1, from http://www.vim.org/scripts/script.php?script_id=918
-    Unpack file to ~/.vim/doc/css/css21.txt and add to ~/.vimrc: >
-
-    autocmd VimEnter * let g:ViewDoc_css = function('g:ViewDoc_help_custom')
+    Create directory ~/.vim/doc/css: >
+	:!mkdir -p ~/.vim/doc/css/
+<   Copy .txt file from archive into ~/.vim/doc/css/css21.txt, and run: >
+	:helptags ~/.vim/doc/css/
+<   Add to ~/.vimrc: >
+	autocmd VimEnter * let g:ViewDoc_css = function('g:ViewDoc_help_custom')
 <
  * CMake, from http://www.vim.org/scripts/script.php?script_id=3045
-    Unpack files to ~/.vim/doc/cmake/*.txt and add to ~/.vimrc: >
-
-    autocmd VimEnter * let g:ViewDoc_cmake = function('g:ViewDoc_help_custom')
-<
-Of course, you should run helptags on these directories after unpacking files: >
-
-    :helptags ~/.vim/doc/css/
-    :helptags ~/.vim/doc/cmake/
+    Create directory ~/.vim/doc/cmake: >
+	:!mkdir -p ~/.vim/doc/cmake/
+<   Copy *.txt files from archive into ~/.vim/doc/cmake/*.txt, and run: >
+	:helptags ~/.vim/doc/cmake/
+<   Add to ~/.vimrc: >
+	autocmd VimEnter * let g:ViewDoc_cmake = function('g:ViewDoc_help_custom')
 <
 
 ------------------------------------------------------------------------------
