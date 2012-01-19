@@ -4,6 +4,7 @@
 " License: This file is placed in the public domain.
 " URL: http://www.vim.org/scripts/script.php?script_id=3893
 " Description: Flexible viewer for any documentation (help/man/perldoc/etc.)
+" TODO Add option to not switch to opened documentation window.
 
 if exists('g:loaded_viewdoc') || &cp || version < 700
 	finish
