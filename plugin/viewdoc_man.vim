@@ -25,6 +25,7 @@ command -bar -bang -nargs=1 -complete=custom,s:CompleteMan ViewDocMan
 " - abbrev
 if !exists('g:no_plugin_abbrev') && !exists('g:no_viewdoc_abbrev')
 	cabbrev <expr> man      getcmdtype()==':' && getcmdline()=='man'  ? 'ViewDocMan'  : 'man'
+	cabbrev <expr> man!     getcmdtype()==':' && getcmdline()=='man!' ? 'ViewDocMan'  : 'man!'
 endif
 
 """ Handlers

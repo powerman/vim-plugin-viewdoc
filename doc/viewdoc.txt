@@ -78,73 +78,96 @@ Tested only in Linux, but should work in any *NIX.
 ==============================================================================
 MAPPINGS					*viewdoc-mappings*
 
-Works everywhere (to disable use |g:no_viewdoc_maps|):
+Global:~
 
-<F1>
-	Open doc for <cword> (word under cursor) in NEW buffer/window/tab.
+<F1>	Open doc for <cword> (word under cursor) in new [Scratch] buffer.
+	To disable use |g:no_viewdoc_maps|.
 
-K
-	Open doc for <cword> in existing '[Doc]' buffer/window/tab
-	(will create '[Doc]' buffer/window/tab if it doesn't exists yet).
+K	Open doc for <cword> in existing [Doc] buffer, replacing it current
+	contents (will create [Doc] buffer if it doesn't exists yet).
+	To disable use |g:no_viewdoc_maps|.
 
-Works only inside buffer/window/tab with doc (can't be disabled):
+Local to buffer with documentation:~
 
-q
-	Close this buffer/window/tab, quit from Vim if it was last buffer.
+q	Close this buffer/window/tab, |:quit| from Vim if it was the last one.
 
 <C-]> or <CR>
-	Open doc for <cword> in same buffer/window/tab.
+	Open documentation for <cword> in same buffer.
 
 <C-T> or <BS>
-	Return to previous doc after using <C-]>.
+	Return to previous documentation in same buffer (after using <C-]>).
 
 ==============================================================================
 COMMANDS					*viewdoc-commands*
 
+General:~
+
 :doc[!] {topic} [{filetype}]			*:doc*	    *:doc!*
-:doc[!] <cword>
-	Abbrev for |:ViewDoc| (to disable use |g:no_viewdoc_abbrev|).
+:doc[!] <cword> [{filetype}]
+	Abbrev for |:ViewDoc|.
+	To disable use |g:no_viewdoc_abbrev|.
 
 :ViewDoc[!] {topic} [{filetype}]		*:ViewDoc*
-:ViewDoc[!] <cword>
+:ViewDoc[!] <cword> [{filetype}]
 	Show documentation for word {topic} or for word under cursor (type
-	<cword> as is, not as "<cword>" or expand("<cword>")).
+	<cword> literally as is, not as "<cword>" or as expand("<cword>")).
 
-	Without {filetype} will use 'ft' of current window to detect which
-	documentation to use (man/help/perldoc/etc.).
+	Without {filetype} will use 'ft' of current buffer to detect which
+	one of |viewdoc-handlers| (man/help/perldoc/etc.) should be used to
+	show documentation for {topic}/<cword>.
 
-	When used with <cword> may use more smart detection of context - like
-	syntax highlight used for word under cursor or surrounding context.
+	When used with <cword> handler may use smart detection of context
+	when needed - check syntax highlight used for word under cursor or
+	surrounding text (which wasn't included in expand("<cword>") because
+	of 'iskeyword' value).
 
-	By default will open documentation in new buffer/window/tab, but when
-	[!] is added >
-	    :ViewDoc! topic
-<	will open doc in existing '[Doc]' buffer/window/tab (create it if not
-	exists yet).
+	By default will open documentation in new [Scratch] buffer, but when
+	[!] is added will open doc in existing [Doc] buffer (will create it if
+	not exists yet). Will this buffer open in current window, new window
+	or new tab depends on |viewdoc-settings|.
+
+	Examples: >
+	    :doc substr perl
+	    :doc! <cword>	" same as pressing <K>
+
+Added by man handler:~
 
 :man[!] {sect} {topic}				*:man*
 :man[!] {topic}({sect})
 :man[!] {topic}
-	Added by |ViewDoc_man|. Abbrev for |:ViewDocMan| (to disable use
-	|g:no_viewdoc_abbrev|).
+:man[!] {sect} <cword>
+:man[!] <cword>
+	Abbrev for |:ViewDocMan|.
+	To disable use |g:no_viewdoc_abbrev|.
 
 :ViewDocMan[!] {sect} {topic}			*:ViewDocMan*
 :ViewDocMan[!] {topic}({sect})
 :ViewDocMan[!] {topic}
-	Added by |ViewDoc_man|. Show man page for given {topic} and (optional)
-	{sect}.
+:ViewDocMan[!] {sect} <cword>
+:ViewDocMan[!] <cword>
+	Show man page for given {topic} and (optional) {sect}.
 
-	Provide auto-complete for {topic} and ({sect}).
+	Works in same way as |:ViewDoc| with {filetype}=man, plus:
+	* support {sect} as separate first param
+	* provide auto-complete for {topic} and ({sect}): >
+	    :man tim<Tab>	" auto-complete {topic}
+	    :man 2 tim<Tab>	" auto-complete {topic} for section 2 only
+	    :man time(<Tab>	" auto-complete {sect}
+
+Added by help handler:~
 
 :help[!] {topic}
-	Added by |ViewDoc_help|. Abbrev for |:ViewDocHelp| (to disable use
-	|g:no_viewdoc_abbrev|).
+:help[!] <cword>
+	Abbrev for |:ViewDocHelp|.
+	To disable use |g:no_viewdoc_abbrev|.
 
 :ViewDocHelp[!] {topic}				*:ViewDocHelp*
-	Added by |ViewDoc_help|. Show Vim help for given {topic}.
+:ViewDocHelp[!] <cword>
+	Show Vim help for given {topic}.
 
-	Provide same auto-complete and other behaviour as standard |:help|,
-	so it can be used as drop-in replacement for it.
+	Works in same way as |:ViewDoc| with {filetype}=help, plus:
+	* provide same auto-complete and other behaviour as standard |:help|,
+	  so it can be used as drop-in replacement
 
 ==============================================================================
 SETTINGS					*viewdoc-settings*
@@ -177,8 +200,8 @@ tab instead: >
 Default is 1.
 
 						*g:viewdoc_man_cmd*
-Added by |ViewDoc_man|, should contain command to run `man`. You may wanna
-change it, for ex. to force English manuals: >
+Added by |ViewDoc_man| handler, should contain command to run `man`. You may
+wanna change it, for ex. to force English manuals: >
 
     let g:viewdoc_man_cmd='LANG= /usr/bin/man'
 <
@@ -252,7 +275,7 @@ For example, here is implementation of |ViewDoc_pydoc| handler: >
 ------------------------------------------------------------------------------
 Handler: DEFAULT				*ViewDoc_DEFAULT*
 
-If there is no handler for current filetype |ViewDoc_man| will be used.
+If there is no handler for current filetype |ViewDoc_man| handler will be used.
 To change default handler to, for ex., |ViewDoc_help| - add to ~/.vimrc: >
 
     autocmd VimEnter * let g:ViewDoc_DEFAULT = function('g:ViewDoc_help')

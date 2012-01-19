@@ -33,6 +33,7 @@ command -bar -bang -nargs=+ ViewDoc
 " - abbrev
 if !exists('g:no_plugin_abbrev') && !exists('g:no_viewdoc_abbrev')
 	cabbrev <expr> doc      getcmdtype()==':' && getcmdline()=='doc'  ? 'ViewDoc'	  : 'doc'
+	cabbrev <expr> doc!     getcmdtype()==':' && getcmdline()=='doc!' ? 'ViewDoc!'	  : 'doc!'
 endif
 " - map
 if !exists('g:no_plugin_maps') && !exists('g:no_viewdoc_maps')
