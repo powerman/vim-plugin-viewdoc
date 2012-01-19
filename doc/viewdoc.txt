@@ -346,24 +346,24 @@ Added commands: |:help| |:ViewDocHelp|.
 Handler: help_custom				*ViewDoc_help_custom*
 
 Show doc for any {filetype} using separate .txt files written in Vim help
-format and stored in directory 'runtimepath'/doc/{filetype}/ (no such help
+format and stored in directory 'runtimepath'/ftdoc/{filetype}/ (no such help
 files provided with this plugin, you should download or write them yourself).
 
 Examples of external docs which can be used with this handler:
 
  * CSS 2.1, from http://www.vim.org/scripts/script.php?script_id=918
-    Create directory ~/.vim/doc/css: >
-	:!mkdir -p ~/.vim/doc/css/
-<   Copy .txt file from archive into ~/.vim/doc/css/css21.txt, and run: >
-	:helptags ~/.vim/doc/css/
+    Create directory ~/.vim/ftdoc/css: >
+	:!mkdir -p ~/.vim/ftdoc/css/
+<   Copy .txt file from archive into ~/.vim/ftdoc/css/css21.txt, and run: >
+	:helptags ~/.vim/ftdoc/css/
 <   Add to ~/.vimrc: >
 	autocmd VimEnter * let g:ViewDoc_css = function('g:ViewDoc_help_custom')
 <
  * CMake, from http://www.vim.org/scripts/script.php?script_id=3045
-    Create directory ~/.vim/doc/cmake: >
-	:!mkdir -p ~/.vim/doc/cmake/
-<   Copy *.txt files from archive into ~/.vim/doc/cmake/*.txt, and run: >
-	:helptags ~/.vim/doc/cmake/
+    Create directory ~/.vim/ftdoc/cmake: >
+	:!mkdir -p ~/.vim/ftdoc/cmake/
+<   Copy *.txt files from archive into ~/.vim/ftdoc/cmake/*.txt, and run: >
+	:helptags ~/.vim/ftdoc/cmake/
 <   Add to ~/.vimrc: >
 	autocmd VimEnter * let g:ViewDoc_cmake = function('g:ViewDoc_help_custom')
 <
