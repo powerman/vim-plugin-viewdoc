@@ -28,7 +28,7 @@ function g:ViewDoc_help(topic, filetype, synid, ctx)
 		\ 'topic':	a:topic,
 		\ }
 	if a:ctx
-		if h.topic !~ "^'.*'$" && (synIDattr(a:synid,'name') =~ 'Option' || search('&\k*\%#','n'))
+		if h.topic !~ "^'.*'$" && (synIDattr(a:synid,'name') =~# 'Option' || search('&\k*\%#','n'))
 			let h.topic = "'" . h.topic . "'"	" auto-detect: 'option'
 		elseif synIDattr(a:synid,'name') =~ 'Command'
 			let h.topic = ':' . h.topic		" auto-detect: :command
