@@ -4,7 +4,6 @@
 " License:		see in viewdoc.vim
 " URL:			see in viewdoc.vim
 " Description: ViewDoc handler for vim help files
-" TODO Add auto-detection based on context/syntax.
 
 if exists('g:loaded_viewdoc_help') || &cp || version < 700
 	finish
@@ -24,12 +23,20 @@ endif
 
 """ Handlers
 
-function g:ViewDoc_help(topic, ...)
+function g:ViewDoc_help(topic, filetype, synid, ctx)
 	let h = { 'ft':		'help',
+		\ 'topic':	a:topic,
 		\ }
+	if a:ctx
+		if h.topic !~ "^'.*'$" && (synIDattr(a:synid,'name') =~ 'Option' || search('&\k*\%#','n'))
+			let h.topic = "'" . h.topic . "'"	" auto-detect: 'option'
+		elseif synIDattr(a:synid,'name') =~ 'Command'
+			let h.topic = ':' . h.topic		" auto-detect: :command
+		endif
+	endif
 	try
 		let savetabnr	= tabpagenr()
-		execute 'tab help ' . a:topic
+		execute 'tab help ' . h.topic
 		let helpfile	= bufname(bufnr(''))
 		let h.cmd	= printf('cat %s', shellescape(helpfile,1))
 		let h.line	= line('.')
