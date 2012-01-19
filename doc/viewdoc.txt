@@ -212,6 +212,16 @@ g:viewdoc_openempty	=1 (default)		*g:viewdoc_openempty*
 	Set this variable to False to avoid opening empty window when
 	documentation can't be found (error message will be shown anyway).
 
+g:viewdoc_dontswitch	=0 (default)		*g:viewdoc_dontswitch*
+			=1
+	By default after opening documentation you'll be switched to
+	buffer/window/tab with that documentation (except situation when
+	documentation wasn't found and you've set |g:viewdoc_openempty|=0).
+	If you prefer to don't change your current buffer/window/tab
+	then set this variable to True. This may make sense in
+	|viewdoc-windowed| or |viewdoc-tabbed| configurations and probably
+	very bad idea in all other cases.
+
 Added by man handler:~
 
 g:viewdoc_man_cmd   ="/usr/bin/man" (default)   *g:viewdoc_man_cmd*
@@ -220,6 +230,7 @@ g:viewdoc_man_cmd   ="/usr/bin/man" (default)   *g:viewdoc_man_cmd*
 	    let g:viewdoc_man_cmd='LANG= /usr/bin/man'
 <
 						*viewdoc-settings-examples*
+						*viewdoc-fullscreen*
 Example configuration: full screen~
  * no tabs
  * one window
@@ -227,19 +238,19 @@ Example configuration: full screen~
  * navigation between files/docs: |:bn| and |:bp|, close: |:bd| >
     let g:viewdoc_open='new'
     let g:viewdoc_only=1
-
+<						*viewdoc-windowed*
 Example configuration: windowed~
  * no tabs
  * many windows with open files/docs
  * navigation/close: CTRL-W something >
     let g:viewdoc_open='topleft new'
-
+<						*viewdoc-tabbed-fullscreen*
 Example configuration: tabbed full screen~
  * many tabs
  * each with one window
  * open files/docs are in different tabs >
     " this is default configuration
-
+<						*viewdoc-tabbed*
 Example configuration: tabbed~
  * many tabs with many windows inside tabs >
     " same as in windowed example above

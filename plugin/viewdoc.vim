@@ -4,7 +4,6 @@
 " License: This file is placed in the public domain.
 " URL: http://www.vim.org/scripts/script.php?script_id=3893
 " Description: Flexible viewer for any documentation (help/man/perldoc/etc.)
-" TODO Add option to not switch to opened documentation window.
 
 if exists('g:loaded_viewdoc') || &cp || version < 700
 	finish
@@ -27,6 +26,9 @@ if !exists('g:viewdoc_prevtabonclose')
 endif
 if !exists('g:viewdoc_openempty')
 	let g:viewdoc_openempty=1
+endif
+if !exists('g:viewdoc_dontswitch')
+	let g:viewdoc_dontswitch=0
 endif
 
 """ Interface
@@ -52,6 +54,7 @@ function ViewDoc(target, topic, ...)
 	let h = s:GetHandle(a:topic, a:0 > 0 ? a:1 : &ft)
 
 	if a:target != 'inplace'
+		let prev_tabpagenr = tabpagenr()
 		call s:OpenBuf(a:target)
 		let b:stack = 0
 	endif
@@ -87,14 +90,28 @@ function ViewDoc(target, topic, ...)
 	nmap <silent> <buffer> <CR>		<C-]>
 	nmap <silent> <buffer> <BS>		<C-T>
 
-	if line('$') == 1 && col('$') == 1
-		if !g:viewdoc_openempty
-			if a:target == 'inplace'
-				call s:Prev()
-			else
-				call s:CloseBuf()
-			endif
+	let is_empty = line('$') == 1 && col('$') == 1
+
+	if is_empty && !g:viewdoc_openempty
+		if a:target == 'inplace'
+			call s:Prev()
+		else
+			call s:CloseBuf()
+			unlet! prev_tabpagenr
 		endif
+	endif
+
+	if g:viewdoc_dontswitch && exists('prev_tabpagenr')
+		if prev_tabpagenr != tabpagenr()
+			execute 'tabnext ' . prev_tabpagenr
+		elseif winnr('$') > 1
+			execute "normal \<C-W>p"
+		else
+			execute "normal \<C-^>"
+		endif
+	endif
+
+	if is_empty
 		redraw | echohl ErrorMsg | echo 'Sorry, no doc for' h.topic | echohl None
 	endif
 endfunction
