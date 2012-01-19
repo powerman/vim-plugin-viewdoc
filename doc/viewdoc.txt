@@ -204,6 +204,14 @@ g:viewdoc_prevtabonclose=1 (default)		*g:viewdoc_prevtabonclose*
 	This plugin by default change this behaviour to move to previous tab.
 	If you like original behaviour set this variable to False.
 
+g:viewdoc_openempty	=1 (default)		*g:viewdoc_openempty*
+			=0
+	If documentation can't be found, empty window with error message will
+	be opened. This is default behaviour to make consistent UI experience
+	(<q> after <F1> will always return to where you was before <F1>).
+	Set this variable to False to avoid opening empty window when
+	documentation can't be found (error message will be shown anyway).
+
 Added by man handler:~
 
 g:viewdoc_man_cmd   ="/usr/bin/man" (default)   *g:viewdoc_man_cmd*

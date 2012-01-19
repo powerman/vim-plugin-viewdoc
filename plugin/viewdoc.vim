@@ -17,13 +17,16 @@ let s:bufname = '[Doc]'
 
 """ Options
 if !exists('g:viewdoc_open')
-	let g:viewdoc_open='tabnew'		" 'topleft new', 'belowright vnew', 'tabnew', etc.
+	let g:viewdoc_open='tabnew'
 endif
 if !exists('g:viewdoc_only')
 	let g:viewdoc_only=0
 endif
 if !exists('g:viewdoc_prevtabonclose')
 	let g:viewdoc_prevtabonclose=1
+endif
+if !exists('g:viewdoc_openempty')
+	let g:viewdoc_openempty=1
 endif
 
 """ Interface
@@ -72,10 +75,6 @@ function ViewDoc(target, topic, ...)
 		let b:docft = h.docft
 	endif
 
-	if line('$') == 1 && col('$') == 1
-		redraw | echohl ErrorMsg | echo 'Sorry, no doc for' h.topic | echohl None
-	endif
-
 	inoremap <silent> <buffer> q		<C-O>:call <SID>CloseBuf()<CR>
 	nnoremap <silent> <buffer> q		:call <SID>CloseBuf()<CR>
 	vnoremap <silent> <buffer> q		<Esc>:call <SID>CloseBuf()<CR>
@@ -87,6 +86,13 @@ function ViewDoc(target, topic, ...)
 	imap <silent> <buffer> <BS>		<C-O><C-T>
 	nmap <silent> <buffer> <CR>		<C-]>
 	nmap <silent> <buffer> <BS>		<C-T>
+
+	if line('$') == 1 && col('$') == 1
+		if !g:viewdoc_openempty
+			normal q
+		endif
+		redraw | echohl ErrorMsg | echo 'Sorry, no doc for' h.topic | echohl None
+	endif
 endfunction
 
 
