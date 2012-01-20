@@ -4,7 +4,6 @@
 " License:		see in viewdoc.vim
 " URL:			see in viewdoc.vim
 " Description: ViewDoc handler for perldoc
-" TODO Add more auto-detection based on context/syntax.
 " TODO Add command 'perldoc' with auto-complete.
 
 if exists('g:loaded_viewdoc_perldoc') || &cp || version < 700
@@ -20,8 +19,39 @@ function g:ViewDoc_perldoc(topic, filetype, synid, ctx)
 		\ 'topic':	a:topic,
 		\ }
 	let synname = a:ctx ? synIDattr(a:synid,'name') : ''
-	if h.topic == 'X'
+	if synname =~# 'SharpBang'
+		let h.topic = 'perlrun'
+	elseif synname =~# 'StatementFiles' && len(h.topic) == 1
 		let h.topic = '-X'
+	elseif synname =~# 'Conditional\|Repeat\|Label'
+		let h.topic = 'perlsyn'
+	elseif synname =~# 'SubPrototype\|SubAttribute'
+		let h.topic = 'perlsub'
+	elseif h.topic ==# 'AUTOLOAD'
+		let h.topic = 'perlsub'
+		let h.search= '^\s*Autoloading\>'
+	elseif h.topic ==# 'DESTROY'
+		let h.topic = 'perlobj'
+		let h.search= '^\s*Destructors\>'
+	elseif h.topic =~# '^__[A-Z]\+__$'
+		let h.topic = 'perldata'
+		let h.search= '^\s*Special\s\+Literals'
+	elseif h.topic ==# 'tr' || h.topic ==# 'y'
+		let h.topic = 'perlop'
+		let h.search= '^\s*tr\/'
+	elseif h.topic =~# '^q[qxw]\?$'
+		let h.search= '^\s*' . h.topic . '\/'
+		let h.topic = 'perlop'
+	elseif synname =~# 'StringStartEnd\|perlQQ'
+		let h.topic = 'perlop'
+		let h.search= '^\s*Quote\s\+and\s\+Quote-[Ll]ike\s\+Operators\s*$'
+	elseif synname =~# 'perlControl'
+		let h.topic = 'perlmod'
+		let h.search= '^\s*BEGIN,'
+	elseif synname =~# '^pod[A-Z]\|POD'
+		let h.topic = 'perlpod'
+	elseif synname =~# 'Match'
+		let h.topic = 'perlre'
 	elseif synname =~# 'Var'
 		" search for position where current var's name begin (starting with [$@%])
 		let col = searchpos('[$@%]{\?\^\?\k*\%#\|\%#[$@%]', 'n')[1]
@@ -35,8 +65,6 @@ function g:ViewDoc_perldoc(topic, filetype, synid, ctx)
 		" ${a} -> $a,  ${^a} -> $^a,  but not ${^aa}
 		let var = substitute(var, '^\([$@%]\){\([^^].*\|\^.\)}$', '\1\2', '')
 		let h.topic = var == '' ? h.topic : var
-	elseif synname =~# 'SharpBang'
-		let h.topic = 'perlrun'
 	endif
 	let t = shellescape(h.topic,1)
 	let h.cmd = printf('perldoc -- %s || perldoc -f %s || perldoc -v %s',t,t,t)

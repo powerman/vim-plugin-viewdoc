@@ -318,6 +318,7 @@ This function must return Dictionary with these keys (all optional): >
     'ft':	String  file type for command output
     'line':	Number  position to move cursor after opening doc
     'col':	Number  position to move cursor after opening doc
+    'search':	String  regexp to search (to move cursor) after opening doc
     'tags':	String  path to file with tags for this doc
     'docft':	String  file type for navigating with <C-]> inside this doc
 
