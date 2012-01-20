@@ -4,13 +4,22 @@
 " License:		see in viewdoc.vim
 " URL:			see in viewdoc.vim
 " Description: ViewDoc handler for perldoc
-" TODO Add command 'perldoc' with auto-complete.
 
 if exists('g:loaded_viewdoc_perldoc') || &cp || version < 700
 	finish
 endif
 let g:loaded_viewdoc_perldoc = 1
 
+
+""" Interface
+" - command
+command -bar -bang -nargs=1 -complete=custom,s:CompletePerl ViewDocPerl
+	\ call ViewDoc('<bang>'=='' ? 'new' : 'doc', <f-args>, 'perl')
+" - abbrev
+if !exists('g:no_plugin_abbrev') && !exists('g:no_viewdoc_abbrev')
+	cabbrev <expr> perldoc  getcmdtype()==':' && getcmdline()=='perldoc'  ? 'ViewDocPerl'  : 'perldoc'
+	cabbrev <expr> perldoc! getcmdtype()==':' && getcmdline()=='perldoc!' ? 'ViewDocPerl'  : 'perldoc!'
+endif
 
 """ Handlers
 
@@ -45,10 +54,10 @@ function g:ViewDoc_perldoc(topic, filetype, synid, ctx)
 	elseif synname =~# 'StringStartEnd\|perlQQ'
 		let h.topic = 'perlop'
 		let h.search= '^\s*Quote\s\+and\s\+Quote-[Ll]ike\s\+Operators\s*$'
-	elseif synname =~# 'perlControl'
+	elseif h.topic =~# '^\(BEGIN\|UNITCHECK\|CHECK\|INIT\|END\)$'
 		let h.topic = 'perlmod'
 		let h.search= '^\s*BEGIN,'
-	elseif synname =~# '^pod[A-Z]\|POD'
+	elseif synname =~# '^pod[A-Z]\|POD' || h.topic =~# '^=[a-z]' || h.topic =~# '^[A-Z]<'
 		let h.topic = 'perlpod'
 	elseif synname =~# 'Match'
 		let h.topic = 'perlre'
@@ -72,4 +81,21 @@ function g:ViewDoc_perldoc(topic, filetype, synid, ctx)
 endfunction
 
 let g:ViewDoc_perl = function('g:ViewDoc_perldoc')
+
+
+""" Internal
+
+function s:CompletePerl(ArgLead, CmdLine, CursorPos)
+	if exists('s:complete')
+		return s:complete
+	endif
+	let data= "__FILE__\n__LINE__\n__PACKAGE__\n__DATA__\n__END__\n"
+	let mod = "BEGIN\nUNITCHECK\nCHECK\nINIT\nEND\n"
+	let pod = system('grep "^=item C<[=A-Z]" $(perl -e "print for grep{-f}map{qq{\$_/pod/perlpod.pod}}@INC") | sed "s/^=item C<//;s/E<.*/</;s/[ >].*//;s/</<>/" | sort -u')
+	let var = system('grep -E "^=item [\$@%][^ ]*\$|=item [A-Z]+\$" $(perl -e "print for grep{-f}map{qq{\$_/pod/perlvar.pod}}@INC") | sed "s/^=item //" | sort -u')
+	let func= "-X\n".system('grep "^=item [[:lower:]]" $(perl -e "print for grep{-f}map{qq{\$_/pod/perlfunc.pod}}@INC") | sed "s/^=item //" | grep -v " [[:lower:]]" | sed "s/ .*//;s/(\$//" | sort -u')
+	let pkg = system('find $(perl -le "\$s{q{.}}=1;print for grep{(\$a=\$_)=~s{/[^/]*\z}{};-d && !\$s{\$_}++ && !\$s{\$a}}sort@INC") -name "*.pm" -printf "%P\n" | sed "s,^[0-9.]\+/,,;s,^"$(perl -MConfig -e "print \$Config{myarchname}")"/,,;s,.pm$,,;s,/,::,g" | sort -u')
+	let s:complete = data.mod.pod.var.func.pkg
+	return s:complete
+endfunction
 

@@ -1,5 +1,5 @@
 " Maintainer: Alex Efros <powerman-asdf@ya.ru>
-" Version: 1.1
+" Version: 1.2
 " Last Modified: Jan 19, 2012
 " License: This file is placed in the public domain.
 " URL: http://www.vim.org/scripts/script.php?script_id=3893
