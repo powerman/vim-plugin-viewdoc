@@ -193,7 +193,8 @@ endfunction
 " Close buffer with doc, and optionally move to previous tab.
 " Quit if closing last buffer.
 function s:CloseBuf()
-	if len(filter( range(1,bufnr('$')), 'buflisted(v:val)' )) == 1
+	let cond = g:viewdoc_only ? 'buflisted(v:val)' : 'buflisted(v:val) && bufloaded(v:val)'
+	if len(filter( range(1,bufnr('$')), cond )) == 1
 		q
 	elseif winnr('$') > 1 || !g:viewdoc_prevtabonclose
 		bwipeout
