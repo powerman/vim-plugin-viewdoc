@@ -1,6 +1,14 @@
+viewdoc
+=======
 
 === Repositories
 
 - Main (Mercurial) at http://code.google.com/p/vim-plugin-viewdoc/
 - Mirror (Git) at https://github.com/powerman/vim-plugin-viewdoc
+
+== Description
+
+Flexible viewer for any documentation source (help/man/perldoc/etc.) for
+any file type inside Vim in easy to use, consistent, smart and
+configurable way.
 
