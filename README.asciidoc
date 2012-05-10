@@ -1,0 +1,6 @@
+
+=== Repositories
+
+- Main (Mercurial) at http://code.google.com/p/vim-plugin-viewdoc/
+- Mirror (Git) at https://github.com/powerman/vim-plugin-viewdoc
+
