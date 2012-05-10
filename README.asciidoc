@@ -1,7 +1,7 @@
 viewdoc
 =======
 
-=== Repositories
+== Repositories
 
 - Main (Mercurial) at http://code.google.com/p/vim-plugin-viewdoc/
 - Mirror (Git) at https://github.com/powerman/vim-plugin-viewdoc
@@ -12,3 +12,26 @@ Flexible viewer for any documentation source (help/man/perldoc/etc.) for
 any file type inside Vim in easy to use, consistent, smart and
 configurable way.
 
+ * You can configure how (keys/commands) documentation will be open. By default it will replace standard mapping for key `K` and command `:help` plus add mapping for `<F1>` key and new commands `:man`, `:doc`, etc.
+ * You can configure where (buffer/window/tab) documentation will be open. Can open new docs in one dedicated (`K`) or new (`<F1>`) buffer/window/tab. Support all work styles:
+   - full screen (no tabs, one window, open files/docs are in hidden buffers), 
+   - windowed (no tabs, many windows with open files/docs), 
+   - tabbed full screen (many tabs, each with one window, open files/docs are in different tabs), 
+   - tabbed (many tabs with many windows inside tabs). 
+ * You can easily navigate to next/previous topic while viewing documentation using `<C-]>` and `<C-T>` (or alternative keys `<CR>` and `<BS>`), just like you use tags for navigation within source code and Vim's help.
+ * Even closing documentation buffer/window/tab is easier, smarter and more configurable than ever before. :)
+ * Smart detection of documentation source and topic when opening documentation for `<cword>` (word under cursor) - can use current syntax highlight (to find topic's context) and surrounding text (when topic doesn't include important special symbols because of 'iskeyword' value).
+ * Smart completion for available documentation topics when opening documentation using command (just like Vim's :help command works). (Some documentation sources may not support this.)
+ * Supported documentation sources:
+   - Vim's help
+   - custom documentation in vim help format
+   - man pages
+   - perldoc
+   - pydoc
+ * Support for new documentation sources and file types can be easily added by external plugins or within ~/.vimrc file.
+ * You can have several documentation sources for same file type, and choose which one should be used on-the-fly.
+ * Can be used as console man page viewer instead of `/usr/bin/man`.
+
+Tested only in Linux, but should work in any `*NIX`.
+
+Download .zip/.vmb from http://www.vim.org/scripts/script.php?script_id=3893
