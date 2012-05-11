@@ -17,8 +17,8 @@ command -bar -bang -nargs=1 -complete=custom,s:CompletePerl ViewDocPerl
 	\ call ViewDoc('<bang>'=='' ? 'new' : 'doc', <f-args>, 'perl')
 " - abbrev
 if !exists('g:no_plugin_abbrev') && !exists('g:no_viewdoc_abbrev')
-	cabbrev <expr> perldoc  getcmdtype()==':' && getcmdline()=='perldoc'  ? 'ViewDocPerl'  : 'perldoc'
-	cabbrev <expr> perldoc! getcmdtype()==':' && getcmdline()=='perldoc!' ? 'ViewDocPerl'  : 'perldoc!'
+	cnoreabbrev <expr> perldoc  getcmdtype()==':' && getcmdline()=='perldoc'  ? 'ViewDocPerl'  : 'perldoc'
+	cnoreabbrev <expr> perldoc! getcmdtype()==':' && getcmdline()=='perldoc!' ? 'ViewDocPerl'  : 'perldoc!'
 endif
 
 """ Handlers

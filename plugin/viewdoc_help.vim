@@ -17,8 +17,8 @@ command -bar -bang -nargs=1 -complete=help ViewDocHelp
 	\ call ViewDoc('<bang>'=='' ? 'new' : 'doc', <f-args>, 'help')
 " - abbrev
 if !exists('g:no_plugin_abbrev') && !exists('g:no_viewdoc_abbrev')
-	cabbrev <expr> help     getcmdtype()==':' && getcmdline()=='help'  ? 'ViewDocHelp' : 'help'
-	cabbrev <expr> help!    getcmdtype()==':' && getcmdline()=='help!' ? 'ViewDocHelp' : 'help!'
+	cnoreabbrev <expr> help     getcmdtype()==':' && getcmdline()=='help'  ? 'ViewDocHelp' : 'help'
+	cnoreabbrev <expr> help!    getcmdtype()==':' && getcmdline()=='help!' ? 'ViewDocHelp' : 'help!'
 endif
 
 """ Handlers
