@@ -309,8 +309,9 @@ filetype	Requested documentation type ({filetype} param for
 		|:ViewDoc| or 'ft' if {filetype} param wasn't used).
 		Usually will be same as in this function's name, unless you've
 		used same function for several file type, like: >
-		    function g:ViewDoc_sh(topic, ...) | ... | endfunction
-		    let g:ViewDoc_tcsh = function('g:ViewDoc_sh')
+		    function ViewDoc_sh(topic, ...) | ... | endfunction
+		    let g:ViewDoc_sh   = function('ViewDoc_sh')
+		    let g:ViewDoc_tcsh = function('ViewDoc_sh')
 
 synid		Syntax id for requested topic as returned by |synID()|.
 		Can be non-zero only if |:ViewDoc| was called with <cword>.
@@ -338,12 +339,13 @@ This function must return Dictionary with these keys (all optional): >
 
 For example, here is implementation of |ViewDoc_pydoc| handler: >
 
-    function g:ViewDoc_pydoc(topic, ...)
+    function ViewDoc_pydoc(topic, ...)
 	    return  { 'cmd':	printf('pydoc %s', shellescape(a:topic,1)),
 		    \ 'ft':	'pydoc',
 		    \ }
     endfunction
-    let g:ViewDoc_python = function('g:ViewDoc_pydoc')
+    let g:ViewDoc_pydoc  = function('ViewDoc_pydoc')
+    let g:ViewDoc_python = function('ViewDoc_pydoc')
 
 ------------------------------------------------------------------------------
 Handler: DEFAULT				*ViewDoc_DEFAULT*
@@ -351,7 +353,7 @@ Handler: DEFAULT				*ViewDoc_DEFAULT*
 If there is no handler for current filetype then |ViewDoc_man| will be used.
 To change default handler to, for ex., |ViewDoc_help|, add to ~/.vimrc: >
 
-    autocmd VimEnter * let g:ViewDoc_DEFAULT = function('g:ViewDoc_help')
+    autocmd VimEnter * let g:ViewDoc_DEFAULT = function('ViewDoc_help')
 
 ------------------------------------------------------------------------------
 Handler: man					*ViewDoc_man*
@@ -394,7 +396,7 @@ Examples of external docs which can be used with this handler:
 <   Copy .txt file from archive into ~/.vim/ftdoc/css/css21.txt, and run: >
 	:helptags ~/.vim/ftdoc/css/
 <   Add to ~/.vimrc: >
-	autocmd VimEnter * let g:ViewDoc_css = function('g:ViewDoc_help_custom')
+	autocmd VimEnter * let g:ViewDoc_css = function('ViewDoc_help_custom')
 <
  * CMake, from http://www.vim.org/scripts/script.php?script_id=3045
     Create directory ~/.vim/ftdoc/cmake: >
@@ -402,7 +404,7 @@ Examples of external docs which can be used with this handler:
 <   Copy *.txt files from archive into ~/.vim/ftdoc/cmake/*.txt, and run: >
 	:helptags ~/.vim/ftdoc/cmake/
 <   Add to ~/.vimrc: >
-	autocmd VimEnter * let g:ViewDoc_cmake = function('g:ViewDoc_help_custom')
+	autocmd VimEnter * let g:ViewDoc_cmake = function('ViewDoc_help_custom')
 <
 
 ------------------------------------------------------------------------------

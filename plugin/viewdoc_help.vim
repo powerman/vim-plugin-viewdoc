@@ -23,7 +23,7 @@ endif
 
 """ Handlers
 
-function g:ViewDoc_help(topic, filetype, synid, ctx)
+function ViewDoc_help(topic, filetype, synid, ctx)
 	let h = { 'ft':		'help',
 		\ 'topic':	a:topic,
 		\ }
@@ -49,9 +49,10 @@ function g:ViewDoc_help(topic, filetype, synid, ctx)
 	return h
 endfunction
 
-let g:ViewDoc_vim = function('g:ViewDoc_help')
+let g:ViewDoc_help = function('ViewDoc_help')
+let g:ViewDoc_vim = function('ViewDoc_help')
 
-function g:ViewDoc_help_custom(topic, ft, ...)
+function ViewDoc_help_custom(topic, ft, ...)
 	let h = { 'ft':		'help',
 		\ 'docft':	a:ft,
 		\ }

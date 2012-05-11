@@ -13,11 +13,12 @@ let g:loaded_viewdoc_pydoc = 1
 
 """ Handlers
 
-function g:ViewDoc_pydoc(topic, ...)
+function ViewDoc_pydoc(topic, ...)
 	return	{ 'cmd':	printf('pydoc %s', shellescape(a:topic,1)),
 		\ 'ft':		'pydoc',
 		\ }
 endfunction
 
-let g:ViewDoc_python = function('g:ViewDoc_pydoc')
+let g:ViewDoc_pydoc = function('ViewDoc_pydoc')
+let g:ViewDoc_python = function('ViewDoc_pydoc')
 
