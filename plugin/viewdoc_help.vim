@@ -36,14 +36,14 @@ function ViewDoc_help(topic, filetype, synid, ctx)
 	endif
 	try
 		let savetabnr	= tabpagenr()
-		execute 'tab help ' . h.topic
-		let helpfile	= bufname(bufnr(''))
+		execute 'noautocmd tab help ' . h.topic
+		let helpfile	= expand('%:p')
 		let h.cmd	= printf('cat %s', shellescape(helpfile,1))
 		let h.line	= line('.')
 		let h.col	= col('.')
 		let h.tags	= substitute(helpfile, '/[^/]*$', '/tags', '')
-		tabclose
-		execute 'tabnext ' . savetabnr
+		noautocmd tabclose
+		execute 'noautocmd tabnext ' . savetabnr
 	catch
 	endtry
 	return h
