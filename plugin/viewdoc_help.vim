@@ -38,7 +38,8 @@ function ViewDoc_help(topic, filetype, synid, ctx)
 		let savetabnr	= tabpagenr()
 		execute 'noautocmd tab help ' . h.topic
 		let helpfile	= expand('%:p')
-		let h.cmd	= printf('cat %s', shellescape(helpfile,1))
+		let cat		= helpfile =~? 'gz$' ? 'zcat' : 'cat'
+		let h.cmd	= printf('%s %s', cat, shellescape(helpfile,1))
 		let h.line	= line('.')
 		let h.col	= col('.')
 		let h.tags	= substitute(helpfile, '/[^/]*$', '/tags', '')
