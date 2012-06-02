@@ -52,7 +52,9 @@ function ViewDoc_man(topic, ...)
 endfunction
 
 let g:ViewDoc_man = function('ViewDoc_man')
-let g:ViewDoc_DEFAULT = function('ViewDoc_man')
+if !exists('g:ViewDoc_DEFAULT')
+	let g:ViewDoc_DEFAULT = function('ViewDoc_man')
+endif
 
 
 """ Internal
