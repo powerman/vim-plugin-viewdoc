@@ -80,6 +80,9 @@ function ViewDoc(target, topic, ...)
 	if exists('h.docft')
 		let b:docft = h.docft
 	endif
+	if exists(':AnsiEsc')
+		AnsiEsc
+	endif
 
 	inoremap <silent> <buffer> q		<C-O>:call <SID>CloseBuf()<CR>
 	nnoremap <silent> <buffer> q		:call <SID>CloseBuf()<CR>
