@@ -37,8 +37,8 @@ command -bar -bang -nargs=+ ViewDoc
 	\ call ViewDoc('<bang>'=='' ? 'new' : 'doc', <f-args>)
 " - abbrev
 if !exists('g:no_plugin_abbrev') && !exists('g:no_viewdoc_abbrev')
-	cnoreabbrev <expr> doc      getcmdtype()==':' && getcmdline()=='doc'  ? 'ViewDoc'  : 'doc'
-	cnoreabbrev <expr> doc!     getcmdtype()==':' && getcmdline()=='doc!' ? 'ViewDoc!' : 'doc!'
+	cnoreabbrev <expr> doc  getcmdtype()==':' && &ft!=='' && getcmdline()=='doc'  ? 'ViewDoc'.substitute(&ft, '^.', '\u&', '') : 'doc'
+	cnoreabbrev <expr> doc! getcmdtype()==':' && &ft!=='' && getcmdline()=='doc!' ? 'ViewDoc!'.substitute(&ft, '^.', '\u&', '') : 'doc!'
 endif
 " - map
 if !exists('g:no_plugin_maps') && !exists('g:no_viewdoc_maps')
