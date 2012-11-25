@@ -11,10 +11,15 @@ endif
 let g:loaded_viewdoc_pydoc = 1
 
 
+""" Options
+if !exists('g:viewdoc_pydoc_cmd')
+	let g:viewdoc_pydoc_cmd='/usr/bin/pydoc'	" user may want '/usr/bin/pydoc3.2'
+endif
+
 """ Handlers
 
 function ViewDoc_pydoc(topic, ...)
-	return	{ 'cmd':	printf('pydoc %s', shellescape(a:topic,1)),
+	return	{ 'cmd':	printf('%s %s', g:viewdoc_pydoc_cmd, shellescape(a:topic,1)),
 		\ 'ft':		'pydoc',
 		\ }
 endfunction

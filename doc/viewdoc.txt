@@ -243,6 +243,13 @@ g:viewdoc_man_cmd   ="/usr/bin/man" (default)   *g:viewdoc_man_cmd*
 	to force English manuals: >
 	    let g:viewdoc_man_cmd='LANG= /usr/bin/man'
 <
+Added by pydoc handler:~
+
+g:viewdoc_pydoc_cmd   ="/usr/bin/pydoc" (default)   *g:viewdoc_pydoc_cmd*
+	Should contain command to run `pydoc`. You may wanna change it, for ex.
+	to force different python version's doc: >
+	    let g:viewdoc_pydoc_cmd='/usr/bin/pydoc3.2'
+<
 						*viewdoc-settings-examples*
 						*viewdoc-fullscreen*
 Example configuration: full screen~
@@ -423,7 +430,9 @@ Added commands: |:perldoc| |:ViewDocPerl|.
 ------------------------------------------------------------------------------
 Handler: pydoc					*ViewDoc_pydoc*
 
-Show doc using `pydoc` command when {filetype} is "python" or "pydoc".
+Show doc using |g:viewdoc_pydoc_cmd| command when {filetype} is "python" or "pydoc".
+
+Added settings: |g:viewdoc_pydoc_cmd|.
 
 ==============================================================================
 SOURCE AND ISSUE TRACKER			*viewdoc-source*
