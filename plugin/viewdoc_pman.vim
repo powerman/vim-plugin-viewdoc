@@ -3,37 +3,37 @@
 " Last Modified:	see in viewdoc.vim
 " License:		see in viewdoc.vim
 " URL:			see in viewdoc.vim
-" Description: ViewDoc handler for man pages (default handler)
+" Description: ViewDoc handler for php man pages
 
-if exists('g:loaded_viewdoc_man') || &cp || version < 700
+if exists('g:loaded_viewdoc_pman') || &cp || version < 700
 	finish
 endif
-let g:loaded_viewdoc_man = 1
+let g:loaded_viewdoc_pman = 1
 
 """ Constants
-let s:re_mansect = '\([0-9]p\?\|[nlp]\|tcl\)'
+let s:re_mansect = '\([0-9]\)'
 
 """ Options
-if !exists('g:viewdoc_man_cmd')
-	let g:viewdoc_man_cmd='/usr/bin/man'	" user may want 'LANG=en /usr/bin/man'
+if !exists('g:viewdoc_pman_cmd')
+	let g:viewdoc_pman_cmd='/usr/bin/pman'
 endif
 
 """ Interface
 " - command
-command -bar -bang -nargs=1 -complete=custom,s:CompleteMan ViewDocMan
-	\ call ViewDoc('<bang>'=='' ? 'new' : 'doc', <f-args>, 'man')
+command -bar -bang -nargs=1 -complete=custom,s:CompleteMan ViewDocPman
+	\ call ViewDoc('<bang>'=='' ? 'new' : 'doc', <f-args>, 'pman')
 " - abbrev
 if !exists('g:no_plugin_abbrev') && !exists('g:no_viewdoc_abbrev')
-	cnoreabbrev <expr> man      getcmdtype()==':' && getcmdline()=='man'  ? 'ViewDocMan'  : 'man'
-	cnoreabbrev <expr> man!     getcmdtype()==':' && getcmdline()=='man!' ? 'ViewDocMan'  : 'man!'
+	cnoreabbrev <expr> pman     getcmdtype()==':' && getcmdline()=='pman'  ? 'ViewDocPman'  : 'pman'
+	cnoreabbrev <expr> pman!    getcmdtype()==':' && getcmdline()=='pman!' ? 'ViewDocPman'  : 'pman!'
 endif
 
 """ Handlers
 
-" let h = ViewDoc_man('time')
-" let h = ViewDoc_man('time(2)')
-" let h = ViewDoc_man('2 time')
-function ViewDoc_man(topic, ...)
+" let h = ViewDoc_pman('error_reporting')
+" let h = ViewDoc_pman('error_reporting(3)')
+" let h = ViewDoc_pman('2 error_reporting')
+function ViewDoc_pman(topic, ...)
 	let sect = ''
 	let name = a:topic
 	let m = matchlist(name, '('.s:re_mansect.')\.\?$')
@@ -46,15 +46,13 @@ function ViewDoc_man(topic, ...)
 		let sect = m[1]
 		let name = substitute(name, '^'.s:re_mansect.'\s\+', '', '')
 	endif
-	return	{ 'cmd':	printf('%s %s %s | sed "s/ \xB7 / * /" | col -b', g:viewdoc_man_cmd, sect, shellescape(name,1)),
-		\ 'ft':		'man',
+	return	{ 'cmd':	printf('%s %s %s | sed "s/ \xB7 / * /" | col -b', g:viewdoc_pman_cmd, sect, shellescape(name,1)),
+		\ 'ft':		'pman',
 		\ }
 endfunction
 
-let g:ViewDoc_man = function('ViewDoc_man')
-if !exists('g:ViewDoc_DEFAULT')
-	let g:ViewDoc_DEFAULT = function('ViewDoc_man')
-endif
+let g:ViewDoc_pman = function('ViewDoc_pman')
+let g:ViewDoc_php  = function('ViewDoc_pman')
 
 
 """ Internal
@@ -63,7 +61,7 @@ endif
 " Autocomplete command:			tim	ti.*e
 " Autocomplete command in section:	2 tim	2 ti.*e
 function s:CompleteMan(ArgLead, CmdLine, CursorPos)
-	let manpath = substitute(system(printf('%s --path', g:viewdoc_man_cmd)),'\n$','','')
+	let manpath = substitute(system(printf('%s --path', g:viewdoc_pman_cmd)),'\n$','','')
 	if manpath =~ ':'
 		let manpath = '{'.join(map(split(manpath,':'),'shellescape(v:val,1)'),',').'}'
 	else
@@ -74,7 +72,7 @@ function s:CompleteMan(ArgLead, CmdLine, CursorPos)
 		if !len(m)
 			return ''
 		endif
-		return system(printf('find %s/man* -type f -regex ".*/"%s"\.[0-9n]p?\(\.bz2\|\.gz\)?" -printf "%%f\n" 2>/dev/null | sed "s/\.bz2$\|\.gz$//;s/.*\///;s/\.\([^.]\+\)$/(\1)/"',
+		return system(printf('find %s/man* -type f -regex ".*/"%s"\.[0-9]\(\.bz2\|\.gz\)?" -printf "%%f\n" 2>/dev/null | sed "s/\.bz2$\|\.gz$//;s/.*\///;s/\.\([^.]\+\)$/(\1)/"',
 			\ manpath, shellescape(m[1],1)))
 	else
 		let m = matchlist(a:CmdLine, '\s'.s:re_mansect.'\s')

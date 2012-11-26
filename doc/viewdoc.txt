@@ -18,6 +18,7 @@ Contents:
 	help_custom		|ViewDoc_help_custom|
 	perldoc			|ViewDoc_perldoc|
 	pydoc			|ViewDoc_pydoc|
+	pman			|ViewDoc_pman|
     Source and issue tracker	|viewdoc-source|
     License			|viewdoc-license|
 
@@ -59,11 +60,12 @@ file type inside Vim in easy to use, consistent, smart and configurable way.
 
  * Supported documentation sources:
 
+   - man pages
    - Vim's help
    - custom documentation in vim help format
-   - man pages
    - perldoc
-   - pydoc
+   - pydoc (python)
+   - pman (php)
 
  * Support for new documentation sources and file types can be easily added by
    external plugins or within ~/.vimrc file.
@@ -102,7 +104,7 @@ COMMANDS					*viewdoc-commands*
 
 General:~
 
-:doc[!] {topic} [{filetype}]			*:doc*	    *:doc!*
+:doc[!] {topic} [{filetype}]			*:doc*
 :doc[!] <cword> [{filetype}]
 	Abbrev for |:ViewDoc|.
 	To disable use |g:no_viewdoc_abbrev|.
@@ -169,9 +171,9 @@ Added by help handler:~
 	* provide same auto-complete and other behaviour as standard |:help|,
 	  so it can be used as drop-in replacement
 
-Added by perl handler:~
+Added by perldoc handler:~
 
-:perldoc[!] {topic}
+:perldoc[!] {topic}				*:perldoc*
 :perldoc[!] <cword>
 	Abbrev for |:ViewDocPerl|.
 	To disable use |g:no_viewdoc_abbrev|.
@@ -183,6 +185,44 @@ Added by perl handler:~
 	Works in same way as |:ViewDoc| with {filetype}=perl, plus:
 	* provide auto-complete for variables/function/modules/POD/etc.
 
+Added by pydoc handler:~
+
+:pydoc[!] {topic}				*:pydoc*
+:pydoc[!] <cword>
+	Abbrev for |:ViewDocPydoc|.
+	To disable use |g:no_viewdoc_abbrev|.
+
+:ViewDocPydoc[!] {topic}			*:ViewDocPydoc*
+:ViewDocPydoc[!] <cword>
+	Show python documentation for given {topic}.
+
+	Works in same way as |:ViewDoc| with {filetype}=python, plus:
+	* provide auto-complete for topics, keywords and modules.
+
+Added by pman handler:~
+
+:pman[!] {sect} {topic}				*:pman*
+:pman[!] {topic}({sect})
+:pman[!] {topic}
+:pman[!] {sect} <cword>
+:pman[!] <cword>
+	Abbrev for |:ViewDocPman|.
+	To disable use |g:no_viewdoc_abbrev|.
+
+:ViewDocPman[!] {sect} {topic}			*:ViewDocPman*
+:ViewDocPman[!] {topic}({sect})
+:ViewDocPman[!] {topic}
+:ViewDocPman[!] {sect} <cword>
+:ViewDocPman[!] <cword>
+	Show php man page for given {topic} and (optional) {sect}.
+
+	Works in same way as |:ViewDoc| with {filetype}=php, plus:
+	* support {sect} as separate first param
+	* provide auto-complete for {topic} and ({sect}): >
+	    :pman tim<Tab>	" auto-complete {topic}
+	    :pman 3 tim<Tab>	" auto-complete {topic} for section 3 only
+	    :pman time(<Tab>	" auto-complete {sect}
+
 ==============================================================================
 SETTINGS					*viewdoc-settings*
 
@@ -190,7 +230,8 @@ General:~
 
 g:no_viewdoc_abbrev				*g:no_viewdoc_abbrev* 
 g:no_plugin_abbrev
-	Set any of these variables to disable abbrev |:help|, |:man|, |:doc|.
+	Set any of these variables to disable abbrev:
+	|:doc|, |:man|, |:help|, |:perldoc|, |:pydoc|, |:pman|.
 
 g:no_viewdoc_maps				*g:no_viewdoc_maps* 
 g:no_plugin_maps
@@ -241,7 +282,7 @@ Added by man handler:~
 g:viewdoc_man_cmd   ="/usr/bin/man" (default)   *g:viewdoc_man_cmd*
 	Should contain command to run `man`. You may wanna change it, for ex.
 	to force English manuals: >
-	    let g:viewdoc_man_cmd='LANG= /usr/bin/man'
+	    let g:viewdoc_man_cmd='LANG=en /usr/bin/man'
 <
 Added by pydoc handler:~
 
@@ -250,6 +291,11 @@ g:viewdoc_pydoc_cmd   ="/usr/bin/pydoc" (default)   *g:viewdoc_pydoc_cmd*
 	to force different python version's doc: >
 	    let g:viewdoc_pydoc_cmd='/usr/bin/pydoc3.2'
 <
+Added by pman handler:~
+
+g:viewdoc_pman_cmd   ="/usr/bin/pman" (default)   *g:viewdoc_pman_cmd*
+	Should contain command to run `pman`.
+
 						*viewdoc-settings-examples*
 						*viewdoc-fullscreen*
 Example configuration: full screen~
@@ -432,7 +478,16 @@ Handler: pydoc					*ViewDoc_pydoc*
 
 Show doc using |g:viewdoc_pydoc_cmd| command when {filetype} is "python" or "pydoc".
 
+Added commands: |:pydoc| |:ViewDocPydoc|.
 Added settings: |g:viewdoc_pydoc_cmd|.
+
+------------------------------------------------------------------------------
+Handler: pman					*ViewDoc_pman*
+
+Show doc using |g:viewdoc_pman_cmd| command when {filetype} is "php" or "pman".
+
+Added commands: |:pman| |:ViewDocPman|.
+Added settings: |g:viewdoc_pman_cmd|.
 
 ==============================================================================
 SOURCE AND ISSUE TRACKER			*viewdoc-source*

@@ -23,11 +23,12 @@ configurable way.
  * Smart detection of documentation source and topic when opening documentation for `<cword>` (word under cursor) - can use current syntax highlight (to find topic's context) and surrounding text (when topic doesn't include important special symbols because of 'iskeyword' value).
  * Smart completion for available documentation topics when opening documentation using command (just like Vim's :help command works). (Some documentation sources may not support this.)
  * Supported documentation sources:
+   - man pages
    - Vim's help
    - custom documentation in vim help format
-   - man pages
    - perldoc
-   - pydoc
+   - pydoc (python)
+   - pman (php)
  * Support for new documentation sources and file types can be easily added by external plugins or within ~/.vimrc file.
  * You can have several documentation sources for same file type, and choose which one should be used on-the-fly.
  * Can be used as console man page viewer instead of `/usr/bin/man`.

@@ -80,9 +80,6 @@ function ViewDoc(target, topic, ...)
 	if exists('h.docft')
 		let b:docft = h.docft
 	endif
-	if exists(':AnsiEsc')
-		AnsiEsc
-	endif
 
 	inoremap <silent> <buffer> q		<C-O>:call <SID>CloseBuf()<CR>
 	nnoremap <silent> <buffer> q		:call <SID>CloseBuf()<CR>
@@ -174,11 +171,6 @@ function s:Prev()
 		undo
 		setlocal nomodifiable
 		normal! 'tzt`s
-		" XXX man page syntax _partially_ switched off after Prev(),
-		" I've no idea why this happens, so just force it again
-		if exists('g:syntax_on')
-			syntax on
-		endif
 	endif
 endfunction
 
