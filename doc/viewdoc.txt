@@ -19,6 +19,7 @@ Contents:
 	perldoc			|ViewDoc_perldoc|
 	pydoc			|ViewDoc_pydoc|
 	pman			|ViewDoc_pman|
+	infman			|ViewDoc_infman|
     Source and issue tracker	|viewdoc-source|
     License			|viewdoc-license|
 
@@ -66,6 +67,7 @@ file type inside Vim in easy to use, consistent, smart and configurable way.
    - perldoc
    - pydoc (python)
    - pman (php)
+   - OS Inferno man pages
 
  * Support for new documentation sources and file types can be easily added by
    external plugins or within ~/.vimrc file.
@@ -223,6 +225,30 @@ Added by pman handler:~
 	    :pman 3 tim<Tab>	" auto-complete {topic} for section 3 only
 	    :pman time(<Tab>	" auto-complete {sect}
 
+Added by infman handler:~
+
+:infman[!] {sect} {topic}			*:infman*
+:infman[!] {topic}({sect})
+:infman[!] {topic}
+:infman[!] {sect} <cword>
+:infman[!] <cword>
+	Abbrev for |:ViewDocInfman|.
+	To disable use |g:no_viewdoc_abbrev|.
+
+:ViewDocInfman[!] {sect} {topic}		*:ViewDocInfman*
+:ViewDocInfman[!] {topic}({sect})
+:ViewDocInfman[!] {topic}
+:ViewDocInfman[!] {sect} <cword>
+:ViewDocInfman[!] <cword>
+	Show OS Inferno man page for given {topic} and (optional) {sect}.
+
+	Works in same way as |:ViewDoc| with {filetype}=limbo, plus:
+	* support {sect} as separate first param
+	* provide auto-complete for {topic} and ({sect}): >
+	    :infman tim<Tab>	" auto-complete {topic}
+	    :infman 2 tim<Tab>	" auto-complete {topic} for section 2 only
+	    :infman time(<Tab>	" auto-complete {sect}
+
 ==============================================================================
 SETTINGS					*viewdoc-settings*
 
@@ -231,7 +257,7 @@ General:~
 g:no_viewdoc_abbrev				*g:no_viewdoc_abbrev* 
 g:no_plugin_abbrev
 	Set any of these variables to disable abbrev:
-	|:doc|, |:man|, |:help|, |:perldoc|, |:pydoc|, |:pman|.
+	|:doc|, |:man|, |:help|, |:perldoc|, |:pydoc|, |:pman|, |:infman|.
 
 g:no_viewdoc_maps				*g:no_viewdoc_maps* 
 g:no_plugin_maps
@@ -286,15 +312,20 @@ g:viewdoc_man_cmd   ="/usr/bin/man" (default)   *g:viewdoc_man_cmd*
 <
 Added by pydoc handler:~
 
-g:viewdoc_pydoc_cmd   ="/usr/bin/pydoc" (default)   *g:viewdoc_pydoc_cmd*
+g:viewdoc_pydoc_cmd ="/usr/bin/pydoc" (default)   *g:viewdoc_pydoc_cmd*
 	Should contain command to run `pydoc`. You may wanna change it, for ex.
 	to force different python version's doc: >
 	    let g:viewdoc_pydoc_cmd='/usr/bin/pydoc3.2'
 <
 Added by pman handler:~
 
-g:viewdoc_pman_cmd   ="/usr/bin/pman" (default)   *g:viewdoc_pman_cmd*
+g:viewdoc_pman_cmd  ="/usr/bin/pman" (default)   *g:viewdoc_pman_cmd*
 	Should contain command to run `pman`.
+
+Added by infman handler:~
+
+g:viewdoc_infman_cmd="emu-g"			*g:viewdoc_infman_cmd*
+	Should contain command able to run any OS Inferno commands (`emu-g`).
 
 						*viewdoc-settings-examples*
 						*viewdoc-fullscreen*
@@ -488,6 +519,15 @@ Show doc using |g:viewdoc_pman_cmd| command when {filetype} is "php" or "pman".
 
 Added commands: |:pman| |:ViewDocPman|.
 Added settings: |g:viewdoc_pman_cmd|.
+
+------------------------------------------------------------------------------
+Handler: infman					*ViewDoc_infman*
+
+Show doc using |g:viewdoc_infman_cmd| command when {filetype} is "limbo" or
+"infman".
+
+Added commands: |:infman| |:ViewDocInfman|.
+Added settings: |g:viewdoc_infman_cmd|.
 
 ==============================================================================
 SOURCE AND ISSUE TRACKER			*viewdoc-source*
