@@ -4,7 +4,7 @@ endif
 let b:did_ftplugin_viewdoc = 1
 
 
-setlocal iskeyword=!-~,^*,^\|,^\",192-255
+setlocal iskeyword=!-~,^*,^\|,^\",^.,^,,192-255
 
 
 let b:undo_ftplugin = exists('b:undo_ftplugin') ? b:undo_ftplugin . '|' : ''
