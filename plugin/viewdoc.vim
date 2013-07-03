@@ -31,6 +31,13 @@ if !exists('g:viewdoc_dontswitch')
 	let g:viewdoc_dontswitch=0
 endif
 
+"set commandline format depending on shell used
+if $SHELL =~ '/t\?csh$'
+	let s:cmd_fmt='%s'
+else
+	let s:cmd_fmt='( %s ) 2>/dev/null'
+endif
+
 """ Interface
 " - command
 command -bar -bang -nargs=+ ViewDoc
@@ -62,7 +69,8 @@ function ViewDoc(target, topic, ...)
 	setlocal modifiable
 	silent 1,$d
 	if exists('h.cmd')
-		execute 'silent 0r ! ( ' . h.cmd . ' ) 2>/dev/null'
+		"execute 'silent 0r ! ( ' . h.cmd . ' ) 2>/dev/null'
+		execute printf('silent 0r ! '.s:cmd_fmt, h.cmd)
 		silent $d
 		execute 'normal! ' . (exists('h.line') ? h.line : 1) . 'G'
 		execute 'normal! ' . (exists('h.col')  ? h.col  : 1) . '|'
