@@ -43,7 +43,9 @@ let g:ViewDoc_python = function('ViewDoc_pydoc')
 " Autocomplete topics, keywords and modules.
 function s:CompletePydoc(ArgLead, CmdLine, CursorPos)
 	if(!exists('s:complete_cache'))
+		call ViewDoc_SetShellToBash()
 		let s:complete_cache = system('echo $(for x in topics keywords modules; do echo $(pydoc $x 2>/dev/null | sed ''s/^$/\a/'') | cut -d $''\a'' -f 3; done) | sed ''s/ /\n/g''')
+		call ViewDoc_RestoreShell()
 	endif
 	return s:complete_cache
 endfunction

@@ -85,7 +85,9 @@ function ViewDoc(target, topic, ...)
 	setlocal modifiable
 	silent 1,$d
 	if exists('h.cmd')
+		call ViewDoc_SetShellToBash()
 		execute 'silent 0r ! ( ' . h.cmd . ' ) 2>/dev/null'
+		call ViewDoc_RestoreShell()
 		silent $d
 		execute 'normal! ' . (exists('h.line') ? h.line : 1) . 'G'
 		execute 'normal! ' . (exists('h.col')  ? h.col  : 1) . '|'
@@ -142,6 +144,23 @@ function ViewDoc(target, topic, ...)
 	endif
 endfunction
 
+function ViewDoc_SetShellToBash()
+	let s:_shell=&shell
+	let s:_shellcmdflag=&shellcmdflag
+	let s:_shellpipe=&shellpipe
+	let s:_shellredir=&shellredir
+	setlocal shell=/bin/bash
+	setlocal shellcmdflag=-c
+	setlocal shellpipe=2>&1\|\ tee
+	setlocal shellredir=>%s\ 2>&1
+endfunction
+
+function ViewDoc_RestoreShell()
+	execute 'setlocal shell='.escape(s:_shell,'| ')
+	execute 'setlocal shellcmdflag='.escape(s:_shellcmdflag,'| ')
+	execute 'setlocal shellpipe='.escape(s:_shellpipe,'| ')
+	execute 'setlocal shellredir='.escape(s:_shellredir,'| ')
+endfunction
 
 """ Internal
 

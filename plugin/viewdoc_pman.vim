@@ -61,6 +61,7 @@ let g:ViewDoc_php  = function('ViewDoc_pman')
 " Autocomplete command:			tim	ti.*e
 " Autocomplete command in section:	2 tim	2 ti.*e
 function s:CompleteMan(ArgLead, CmdLine, CursorPos)
+	call ViewDoc_SetShellToBash()
 	let manpath = substitute(system(printf('%s --path', g:viewdoc_pman_cmd)),'\n$','','')
 	if manpath =~ ':'
 		let manpath = '{'.join(map(split(manpath,':'),'shellescape(v:val,1)'),',').'}'
@@ -72,13 +73,15 @@ function s:CompleteMan(ArgLead, CmdLine, CursorPos)
 		if !len(m)
 			return ''
 		endif
-		return system(printf('find %s/man* -type f -regex ".*/"%s"\.[0-9]\(\.bz2\|\.gz\)?" -printf "%%f\n" 2>/dev/null | sed "s/\.bz2$\|\.gz$//;s/.*\///;s/\.\([^.]\+\)$/(\1)/"',
+		let res = system(printf('find %s/man* -type f -regex ".*/"%s"\.[0-9]\(\.bz2\|\.gz\)?" -printf "%%f\n" 2>/dev/null | sed "s/\.bz2$\|\.gz$//;s/.*\///;s/\.\([^.]\+\)$/(\1)/"',
 			\ manpath, shellescape(m[1],1)))
 	else
 		let m = matchlist(a:CmdLine, '\s'.s:re_mansect.'\s')
 		let sect = len(m) ? m[1] : '*'
-		return system(printf('find %s/man%s -type f -printf "%%f\n" 2>/dev/null | sed "s/\.bz2$\|\.gz$//;s/\.[^.]*$//" | sort -u',
+		let res = system(printf('find %s/man%s -type f -printf "%%f\n" 2>/dev/null | sed "s/\.bz2$\|\.gz$//;s/\.[^.]*$//" | sort -u',
 			\ manpath, sect))
 	endif
+	call ViewDoc_RestoreShell()
+	return res
 endfunction
 

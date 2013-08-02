@@ -90,6 +90,7 @@ function s:CompletePerl(ArgLead, CmdLine, CursorPos)
 	if exists('s:complete')
 		return s:complete
 	endif
+	call ViewDoc_SetShellToBash()
 	let data= "__FILE__\n__LINE__\n__PACKAGE__\n__DATA__\n__END__\n"
 	let mod = "BEGIN\nUNITCHECK\nCHECK\nINIT\nEND\n"
 	let pod = system('grep "^=item C<[=A-Z]" $(perl -e "print for grep{-f}map{qq{\$_/pod/perlpod.pod}}@INC") | sed "s/^=item C<//;s/E<.*/</;s/[ >].*//;s/</<>/" | sort -u')
@@ -97,6 +98,7 @@ function s:CompletePerl(ArgLead, CmdLine, CursorPos)
 	let func= "-X\n".system('grep "^=item [[:lower:]]" $(perl -e "print for grep{-f}map{qq{\$_/pod/perlfunc.pod}}@INC") | sed "s/^=item //" | grep -v " [[:lower:]]" | sed "s/ .*//;s/(\$//" | sort -u')
 	let pkg = system('find $(perl -le "\$s{q{.}}=1;print for grep{(\$a=\$_)=~s{/[^/]*\z}{};-d && !\$s{\$_}++ && !\$s{\$a}}sort@INC") -name "*.pm" -printf "%P\n" | sed "s,^[0-9.]\+/,,;s,^"$(perl -MConfig -e "print \$Config{myarchname}")"/,,;s,.pm$,,;s,/,::,g" | sort -u')
 	let s:complete = data.mod.pod.var.func.pkg
+	call ViewDoc_RestoreShell()
 	return s:complete
 endfunction
 

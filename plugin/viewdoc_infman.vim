@@ -62,18 +62,21 @@ let g:ViewDoc_limbo  = function('ViewDoc_infman')
 " Autocomplete command:			tim	ti.*e
 " Autocomplete command in section:	2 tim	2 ti.*e
 function s:CompleteInfman(ArgLead, CmdLine, CursorPos)
+	call ViewDoc_SetShellToBash()
 	if strpart(a:CmdLine, a:CursorPos - 1) == '('
 		let m = matchlist(a:CmdLine, '\s\(\S\+\)($')
 		if !len(m)
 			return ''
 		endif
-		return system(printf('%s man -w %s | sed ''s/\/man\/\([0-9]\+\)\/\(.*\)/\2(\1)/''',
+		let res = system(printf('%s man -w %s | sed ''s/\/man\/\([0-9]\+\)\/\(.*\)/\2(\1)/''',
 			\ g:viewdoc_infman_cmd, shellescape(m[1],1)))
 	else
 		let m = matchlist(a:CmdLine, '\s'.s:re_mansect.'\s')
 		let sect = len(m) ? m[1] : '*'
-		return system(printf('%s cat /man/%s/INDEX | sed "s/ .*//" | sort -u',
+		let res = system(printf('%s cat /man/%s/INDEX | sed "s/ .*//" | sort -u',
 			\ g:viewdoc_infman_cmd, sect))
 	endif
+	call ViewDoc_RestoreShell()
+	return res
 endfunction
 
