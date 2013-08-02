@@ -59,6 +59,29 @@ function ViewDoc(target, topic, ...)
 		let b:stack = 0
 	endif
 
+	" Force same settings as :help does
+	" https://bitbucket.org/ZyX_I/vim/src/8d8a30a648f05a91c3c433f0e01343649449ca3c/src/ex_cmds.c#cl-3523
+	setlocal tabstop=8
+	setlocal nolist
+	setlocal nobinary
+	setlocal nonumber
+	setlocal norelativenumber
+	if has('arabic')
+		setlocal noarabic
+	endif
+	if has('rightleft')
+		setlocal norightleft
+	endif
+	if has('folding')
+		setlocal nofoldenable
+	endif
+	if has('diff')
+		setlocal nodiff
+	endif
+	if has('spell')
+		setlocal nospell
+	endif
+
 	setlocal modifiable
 	silent 1,$d
 	if exists('h.cmd')
