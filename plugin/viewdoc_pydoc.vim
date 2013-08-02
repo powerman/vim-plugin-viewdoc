@@ -29,7 +29,7 @@ endif
 """ Handlers
 
 function ViewDoc_pydoc(topic, ...)
-	return	{ 'cmd':	printf('%s %s', g:viewdoc_pydoc_cmd, shellescape(a:topic,1)),
+	return	{ 'cmd':	printf('%s %s | grep -v "no Python documentation found"', g:viewdoc_pydoc_cmd, shellescape(a:topic,1)),
 		\ 'ft':		'pydoc',
 		\ }
 endfunction
