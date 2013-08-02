@@ -308,7 +308,7 @@ Added by man handler:~
 g:viewdoc_man_cmd   ="/usr/bin/man" (default)   *g:viewdoc_man_cmd*
 	Should contain command to run `man`. You may wanna change it, for ex.
 	to force English manuals: >
-	    let g:viewdoc_man_cmd='LANG=en /usr/bin/man'
+	    let g:viewdoc_man_cmd='LANG=en_US.UTF-8 /usr/bin/man'
 <
 Added by pydoc handler:~
 
@@ -454,9 +454,14 @@ Also used as default handler, see |ViewDoc_DEFAULT|.
 Added commands: |:man| |:ViewDocMan|.
 Added settings: |g:viewdoc_man_cmd|.
 
-To view man pages in Vim from console add this to ~/.bashrc: >
+To view man pages in Vim from console add this script to ~/bin/man: >
 
-    function man() { vim -c "ViewDocMan $*" -c tabonly; }
+    #!/bin/bash
+    if [ ${1:0:1} == "-" ]; then
+	    exec /usr/bin/man $*
+    else
+	    exec vi -c "ViewDocMan $*" -c tabonly
+    fi
 
 ------------------------------------------------------------------------------
 Handler: help					*ViewDoc_help*
