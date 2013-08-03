@@ -149,7 +149,7 @@ function ViewDoc_SetShellToBash()
 	let s:_shellcmdflag=&shellcmdflag
 	let s:_shellpipe=&shellpipe
 	let s:_shellredir=&shellredir
-	setlocal shell=/bin/bash
+	setlocal shell=/bin/sh
 	setlocal shellcmdflag=-c
 	setlocal shellpipe=2>&1\|\ tee
 	setlocal shellredir=>%s\ 2>&1
