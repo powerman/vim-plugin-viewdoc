@@ -149,10 +149,12 @@ function ViewDoc_SetShellToBash()
 	let s:_shellcmdflag=&shellcmdflag
 	let s:_shellpipe=&shellpipe
 	let s:_shellredir=&shellredir
-	setlocal shell=/bin/sh
-	setlocal shellcmdflag=-c
-	setlocal shellpipe=2>&1\|\ tee
-	setlocal shellredir=>%s\ 2>&1
+	if !has('win16') && !has('win32') && !has('win64')
+		setlocal shell=/bin/sh
+		setlocal shellcmdflag=-c
+		setlocal shellpipe=2>&1\|\ tee
+		setlocal shellredir=>%s\ 2>&1
+	endif
 endfunction
 
 function ViewDoc_RestoreShell()
