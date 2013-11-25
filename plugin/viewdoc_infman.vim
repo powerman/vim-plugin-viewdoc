@@ -66,6 +66,7 @@ function s:CompleteInfman(ArgLead, CmdLine, CursorPos)
 	if strpart(a:CmdLine, a:CursorPos - 1) == '('
 		let m = matchlist(a:CmdLine, '\s\(\S\+\)($')
 		if !len(m)
+			call ViewDoc_RestoreShell()
 			return ''
 		endif
 		let res = system(printf('%s man -w %s | sed ''s/\/man\/\([0-9]\+\)\/\(.*\)/\2(\1)/''',

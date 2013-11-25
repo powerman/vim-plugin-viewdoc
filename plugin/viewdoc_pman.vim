@@ -71,6 +71,7 @@ function s:CompleteMan(ArgLead, CmdLine, CursorPos)
 	if strpart(a:CmdLine, a:CursorPos - 1) == '('
 		let m = matchlist(a:CmdLine, '\s\(\S\+\)($')
 		if !len(m)
+			call ViewDoc_RestoreShell()
 			return ''
 		endif
 		let res = system(printf('find %s/man* -type f -regex ".*/"%s"\.[0-9]\(\.bz2\|\.gz\)?" -printf "%%f\n" 2>/dev/null | sed "s/\.bz2$\|\.gz$//;s/.*\///;s/\.\([^.]\+\)$/(\1)/"',
