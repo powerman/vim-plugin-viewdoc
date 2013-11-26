@@ -11,11 +11,17 @@ endif
 let g:loaded_viewdoc_man = 1
 
 """ Constants
-let s:re_mansect = '\([0-9]p\?\|[nlp]\|tcl\)'
+let s:re_mansect = '\([0-9]p\?\|[mnlp]\|tcl\)'
 
 """ Options
+if !exists('g:viewdoc_sed_cmd')
+	let g:viewdoc_sed_cmd='/bin/sed'	" path to gnu sed '/usr/local/bin/gsed' for *BSD
+endif
 if !exists('g:viewdoc_man_cmd')
 	let g:viewdoc_man_cmd='/usr/bin/man'	" user may want 'LANG=en /usr/bin/man'
+endif
+if !exists('g:viewdoc_manpath_cmd')
+	let g:viewdoc_manpath_cmd='/usr/bin/manpath'	" command used to get list of directories in which to look for man pages
 endif
 
 """ Interface
@@ -64,25 +70,17 @@ endif
 " Autocomplete command in section:	2 tim	2 ti.*e
 function s:CompleteMan(ArgLead, CmdLine, CursorPos)
 	call ViewDoc_SetShellToBash()
-	let manpath = substitute(system(printf('%s --path', g:viewdoc_man_cmd)),'\n$','','')
-	if manpath =~ ':'
-		let manpath = '{'.join(map(split(manpath,':'),'shellescape(v:val,1)'),',').'}'
-	else
-		let manpath = shellescape(manpath,1)
-	endif
 	if strpart(a:CmdLine, a:CursorPos - 1) == '('
 		let m = matchlist(a:CmdLine, '\s\(\S\+\)($')
 		if !len(m)
 			call ViewDoc_RestoreShell()
 			return ''
 		endif
-		let res = system(printf('find %s/man* -type f -regex ".*/"%s"\.[0-9n]p?\(\.bz2\|\.gz\)?" -printf "%%f\n" 2>/dev/null | sed "s/\.bz2$\|\.gz$//;s/.*\///;s/\.\([^.]\+\)$/(\1)/"',
-			\ manpath, shellescape(m[1],1)))
+		let res = system(printf('find $(%s|sed "s/:/ /g") -type f -iregex .\*man.\*/%s\..\* -print 2>/dev/null | %s -e "s/.*\///g" -e "s/\(.*\)\.\(.*\)\..*/\1(\2)/g" | sort -u', g:viewdoc_manpath_cmd, shellescape(m[1],1), g:viewdoc_sed_cmd))
 	else
 		let m = matchlist(a:CmdLine, '\s'.s:re_mansect.'\s')
 		let sect = len(m) ? m[1] : '*'
-		let res = system(printf('find %s/man%s -type f -printf "%%f\n" 2>/dev/null | sed "s/\.bz2$\|\.gz$//;s/\.[^.]*$//" | sort -u',
-			\ manpath, sect))
+		let res = system(printf('find $(%s|sed "s/:/ /g") -type f -ipath \*/man%s/\* -print 2>/dev/null | %s -e "s/.*\///g" -e "s/\.[^.]*\(\.bz2\|\.gz\)\{0,1\}$//" | sort -u', g:viewdoc_manpath_cmd, sect, g:viewdoc_sed_cmd))
 	endif
 	call ViewDoc_RestoreShell()
 	return res
