@@ -64,25 +64,17 @@ endif
 " Autocomplete command in section:	2 tim	2 ti.*e
 function s:CompleteMan(ArgLead, CmdLine, CursorPos)
 	call ViewDoc_SetShellToBash()
-	let manpath = substitute(system(printf('%s --path', g:viewdoc_man_cmd)),'\n$','','')
-	if manpath =~ ':'
-		let manpath = '{'.join(map(split(manpath,':'),'shellescape(v:val,1)'),',').'}'
-	else
-		let manpath = shellescape(manpath,1)
-	endif
 	if strpart(a:CmdLine, a:CursorPos - 1) == '('
 		let m = matchlist(a:CmdLine, '\s\(\S\+\)($')
 		if !len(m)
 			call ViewDoc_RestoreShell()
 			return ''
 		endif
-		let res = system(printf('find %s/man* -type f -regex ".*/"%s"\.[0-9n]p?\(\.bz2\|\.gz\)?" -printf "%%f\n" 2>/dev/null | sed "s/\.bz2$\|\.gz$//;s/.*\///;s/\.\([^.]\+\)$/(\1)/"',
-			\ manpath, shellescape(m[1],1)))
+		let res = system(printf('find $(manpath 2>/dev/null | sed "s/:/ /g") -type f -iregex ".*/man[0-9a-z][0-9a-z]*/"%s"\..*" 2>/dev/null | sed "s/.*\/man\([^/]*\/\)/\1/; s/\.bz2$//; s/\.gz$//; s/\(.*\)\/\(.*\)\.[^.]*$/\2(\1)/" | sort -u', shellescape(m[1],1)))
 	else
 		let m = matchlist(a:CmdLine, '\s'.s:re_mansect.'\s')
 		let sect = len(m) ? m[1] : '*'
-		let res = system(printf('find %s/man%s -type f -printf "%%f\n" 2>/dev/null | sed "s/\.bz2$\|\.gz$//;s/\.[^.]*$//" | sort -u',
-			\ manpath, sect))
+		let res = system(printf('find $(manpath 2>/dev/null | sed "s/:/ /g") -type f -path "*/man%s/*" 2>/dev/null | sed "s/.*\///; s/\.bz2$//; s/\.gz$//; s/\.[^.]*$//" | sort -u', sect))
 	endif
 	call ViewDoc_RestoreShell()
 	return res
