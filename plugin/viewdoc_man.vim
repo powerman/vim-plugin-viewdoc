@@ -11,7 +11,7 @@ endif
 let g:loaded_viewdoc_man = 1
 
 """ Constants
-let s:re_mansect = '\([0-9]p\?\|[nlp]\|tcl\)'
+let s:re_mansect = '\([0-9a-z]\+\)'
 
 """ Options
 if !exists('g:viewdoc_man_cmd')
@@ -38,12 +38,12 @@ function ViewDoc_man(topic, ...)
 	let name = a:topic
 	let m = matchlist(name, '('.s:re_mansect.')\.\?$')
 	if (len(m))
-		let sect = m[1]
+		let sect = '-S '.m[1]
 		let name = substitute(name, '('.s:re_mansect.')\.\?$', '', '')
 	endif
 	let m = matchlist(name, '^'.s:re_mansect.'\s\+')
 	if (len(m))
-		let sect = m[1]
+		let sect = '-S '.m[1]
 		let name = substitute(name, '^'.s:re_mansect.'\s\+', '', '')
 	endif
 	return	{ 'cmd':	printf('%s %s %s | sed "s/ \xB7 / * /" | col -b', g:viewdoc_man_cmd, sect, shellescape(name,1)),
