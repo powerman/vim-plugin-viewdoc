@@ -33,7 +33,7 @@ endif
 " let h = ViewDoc_pman('error_reporting')
 " let h = ViewDoc_pman('error_reporting(3)')
 " let h = ViewDoc_pman('2 error_reporting')
-function ViewDoc_pman(topic, ...)
+function s:ViewDoc_pman(topic, ...)
 	let sect = ''
 	let name = a:topic
 	let m = matchlist(name, '('.s:re_mansect.')\.\?$')
@@ -51,8 +51,8 @@ function ViewDoc_pman(topic, ...)
 		\ }
 endfunction
 
-let g:ViewDoc_pman = function('ViewDoc_pman')
-let g:ViewDoc_php  = function('ViewDoc_pman')
+let g:ViewDoc_pman = function('s:ViewDoc_pman')
+let g:ViewDoc_php  = function('s:ViewDoc_pman')
 
 
 """ Internal

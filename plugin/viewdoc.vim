@@ -37,14 +37,14 @@ command -bar -bang -nargs=+ ViewDoc
 	\ call ViewDoc('<bang>'=='' ? 'new' : 'doc', <f-args>)
 " - abbrev
 if !exists('g:no_plugin_abbrev') && !exists('g:no_viewdoc_abbrev')
-	cnoreabbrev <expr> doc      getcmdtype()==':' && getcmdline()=='doc'  ? 'ViewDoc'  : 'doc'
-	cnoreabbrev <expr> doc!     getcmdtype()==':' && getcmdline()=='doc!' ? 'ViewDoc!' : 'doc!'
+	cnoreabbrev <expr> doc  getcmdtype()==':' && getcmdline()=='doc'  ? 'ViewDoc'  : 'doc'
+	cnoreabbrev <expr> doc! getcmdtype()==':' && getcmdline()=='doc!' ? 'ViewDoc!' : 'doc!'
 endif
 " - map
 if !exists('g:no_plugin_maps') && !exists('g:no_viewdoc_maps')
-	inoremap <unique> <F1>	<C-O>:call ViewDoc('new', '<cword>')<CR>
-	nnoremap <unique> <F1>	:call ViewDoc('new', '<cword>')<CR>
-	nnoremap <unique> K		:call ViewDoc('doc', '<cword>')<CR>
+	inoremap <unique> <F1>  <C-O>:call ViewDoc('new', '<cword>')<CR>
+	nnoremap <unique> <F1>  :call ViewDoc('new', '<cword>')<CR>
+	nnoremap <unique> K     :call ViewDoc('doc', '<cword>')<CR>
 endif
 " - function
 " call ViewDoc('new', '<cword>')		auto-detect context/syntax and file type
@@ -186,11 +186,15 @@ function s:GetHandle(topic, ft)
 	let handler = exists('g:ViewDoc_{a:ft}') ? a:ft : 'DEFAULT'
 	if type(g:ViewDoc_{handler}) == type("")
 		let name = g:ViewDoc_{handler}
-		if exists('*{name}')
+		if name !~# '^g:'
+			let name = 'g:' . name
+		endif
+		if exists('{name}') && type({name}) == type(function("tr"))
 			unlet g:ViewDoc_{handler}
-			let g:ViewDoc_{handler} = function(name)
+			let g:ViewDoc_{handler} = {name}
 		else
 			echohl ErrorMsg | echo 'No such function:' name | echohl None | sleep 2
+			return { 'ft': a:ft, 'topic': topic }
 		endif
 	endif
 	let h = g:ViewDoc_{handler}(topic, a:ft, synid, cword)

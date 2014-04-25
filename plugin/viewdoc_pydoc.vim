@@ -28,14 +28,14 @@ endif
 
 """ Handlers
 
-function ViewDoc_pydoc(topic, ...)
+function s:ViewDoc_pydoc(topic, ...)
 	return	{ 'cmd':	printf('%s %s | grep -v "no Python documentation found"', g:viewdoc_pydoc_cmd, shellescape(a:topic,1)),
 		\ 'ft':		'pydoc',
 		\ }
 endfunction
 
-let g:ViewDoc_pydoc  = function('ViewDoc_pydoc')
-let g:ViewDoc_python = function('ViewDoc_pydoc')
+let g:ViewDoc_pydoc  = function('s:ViewDoc_pydoc')
+let g:ViewDoc_python = function('s:ViewDoc_pydoc')
 
 
 """ Internal

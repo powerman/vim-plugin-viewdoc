@@ -379,7 +379,8 @@ HANDLERS					*viewdoc-handlers*
 
 						*ViewDoc_{filetype}()*
 To add documentation handler for new {filetype} it's enough to create one
-function in ~/.vimrc (or some plugin): >
+global function (or global variable with same name assigned to Funcref)
+in ~/.vimrc (or some plugin): >
 
     ViewDoc_{filetype}(topic, filetype, synid, have_context)
 <
@@ -393,9 +394,9 @@ filetype	Requested documentation type ({filetype} param for
 		|:ViewDoc| or 'ft' if {filetype} param wasn't used).
 		Usually will be same as in this function's name, unless you've
 		used same function for several file type, like: >
-		    function ViewDoc_sh(topic, ...) | ... | endfunction
-		    let g:ViewDoc_sh   = function('ViewDoc_sh')
-		    let g:ViewDoc_tcsh = function('ViewDoc_sh')
+		    function s:ViewDoc_sh(topic, ...) | ... | endfunction
+		    let g:ViewDoc_sh   = function('s:ViewDoc_sh')
+		    let g:ViewDoc_tcsh = function('s:ViewDoc_sh')
 
 synid		Syntax id for requested topic as returned by |synID()|.
 		Can be non-zero only if |:ViewDoc| was called with <cword>.
@@ -423,13 +424,13 @@ This function must return Dictionary with these keys (all optional): >
 
 For example, here is implementation of |ViewDoc_pydoc| handler: >
 
-    function ViewDoc_pydoc(topic, ...)
+    function s:ViewDoc_pydoc(topic, ...)
 	    return  { 'cmd':	printf('pydoc %s', shellescape(a:topic,1)),
 		    \ 'ft':	'pydoc',
 		    \ }
     endfunction
-    let g:ViewDoc_pydoc  = function('ViewDoc_pydoc')
-    let g:ViewDoc_python = function('ViewDoc_pydoc')
+    let g:ViewDoc_pydoc  = function('s:ViewDoc_pydoc')
+    let g:ViewDoc_python = function('s:ViewDoc_pydoc')
 
 ------------------------------------------------------------------------------
 Handler: DEFAULT				*ViewDoc_DEFAULT*
@@ -443,7 +444,7 @@ Or you can use function reference instead of function name, but this may
 require delaying until this function will be loaded (if it isn't defined
 in ~/.vimrc): >
 
-    autocmd VimEnter *   let g:ViewDoc_DEFAULT = function('ViewDoc_help')
+    autocmd VimEnter *   let g:ViewDoc_DEFAULT = g:ViewDoc_help
 
 ------------------------------------------------------------------------------
 Handler: man					*ViewDoc_man*

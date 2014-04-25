@@ -23,7 +23,7 @@ endif
 
 """ Handlers
 
-function ViewDoc_help(topic, filetype, synid, ctx)
+function s:ViewDoc_help(topic, filetype, synid, ctx)
 	let h = { 'ft':		'help',
 		\ 'topic':	a:topic,
 		\ }
@@ -50,10 +50,10 @@ function ViewDoc_help(topic, filetype, synid, ctx)
 	return h
 endfunction
 
-let g:ViewDoc_help = function('ViewDoc_help')
-let g:ViewDoc_vim = function('ViewDoc_help')
+let g:ViewDoc_help = function('s:ViewDoc_help')
+let g:ViewDoc_vim  = function('s:ViewDoc_help')
 
-function ViewDoc_help_custom(topic, ft, ...)
+function s:ViewDoc_help_custom(topic, ft, ...)
 	let h = { 'ft':		'help',
 		\ 'docft':	a:ft,
 		\ }
@@ -83,4 +83,6 @@ function ViewDoc_help_custom(topic, ft, ...)
 	execute 'tabnext ' . savetabnr
 	return h
 endfunction
+
+let g:ViewDoc_help_custom = function('s:ViewDoc_help_custom')
 

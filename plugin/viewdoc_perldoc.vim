@@ -23,7 +23,7 @@ endif
 
 """ Handlers
 
-function ViewDoc_perldoc(topic, filetype, synid, ctx)
+function s:ViewDoc_perldoc(topic, filetype, synid, ctx)
 	let h = { 'ft':		'perldoc',
 		\ 'topic':	a:topic,
 		\ }
@@ -80,8 +80,8 @@ function ViewDoc_perldoc(topic, filetype, synid, ctx)
 	return h
 endfunction
 
-let g:ViewDoc_perl = function('ViewDoc_perldoc')
-let g:ViewDoc_perldoc = function('ViewDoc_perldoc')
+let g:ViewDoc_perl    = function('s:ViewDoc_perldoc')
+let g:ViewDoc_perldoc = function('s:ViewDoc_perldoc')
 
 
 """ Internal

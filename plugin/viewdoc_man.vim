@@ -33,7 +33,7 @@ endif
 " let h = ViewDoc_man('time')
 " let h = ViewDoc_man('time(2)')
 " let h = ViewDoc_man('2 time')
-function ViewDoc_man(topic, ...)
+function s:ViewDoc_man(topic, ...)
 	let sect = ''
 	let name = a:topic
 	let m = matchlist(name, '('.s:re_mansect.')\.\?$')
@@ -51,9 +51,9 @@ function ViewDoc_man(topic, ...)
 		\ }
 endfunction
 
-let g:ViewDoc_man = function('ViewDoc_man')
+let g:ViewDoc_man = function('s:ViewDoc_man')
 if !exists('g:ViewDoc_DEFAULT')
-	let g:ViewDoc_DEFAULT = function('ViewDoc_man')
+	let g:ViewDoc_DEFAULT = g:ViewDoc_man
 endif
 
 

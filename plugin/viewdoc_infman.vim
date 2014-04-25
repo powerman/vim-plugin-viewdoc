@@ -33,7 +33,7 @@ endif
 " let h = ViewDoc_infman('time')
 " let h = ViewDoc_infman('time(2)')
 " let h = ViewDoc_infman('2 time')
-function ViewDoc_infman(topic, ...)
+function s:ViewDoc_infman(topic, ...)
 	let sect = ''
 	let name = a:topic
 	let m = matchlist(name, '('.s:re_mansect.')\.\?$')
@@ -52,8 +52,8 @@ function ViewDoc_infman(topic, ...)
 		\ }
 endfunction
 
-let g:ViewDoc_infman = function('ViewDoc_infman')
-let g:ViewDoc_limbo  = function('ViewDoc_infman')
+let g:ViewDoc_infman = function('s:ViewDoc_infman')
+let g:ViewDoc_limbo  = function('s:ViewDoc_infman')
 
 
 """ Internal
