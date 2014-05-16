@@ -52,8 +52,13 @@ function s:ViewDoc_infman(topic, ...)
 		\ }
 endfunction
 
-let g:ViewDoc_infman = function('s:ViewDoc_infman')
-let g:ViewDoc_limbo  = function('s:ViewDoc_infman')
+" use function(s:SID().'Foo') instead of function('s:Foo') for
+" compatibility with Vim-7.3.x (7.3.762 at least)
+function s:SID()
+	return matchstr(expand('<sfile>'), '\zs<SNR>\d\+_\zeSID$')
+endfunction
+let g:ViewDoc_infman = function(s:SID().'ViewDoc_infman')
+let g:ViewDoc_limbo  = function(s:SID().'ViewDoc_infman')
 
 
 """ Internal

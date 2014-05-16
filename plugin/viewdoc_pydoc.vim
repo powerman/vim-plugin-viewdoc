@@ -34,8 +34,13 @@ function s:ViewDoc_pydoc(topic, ...)
 		\ }
 endfunction
 
-let g:ViewDoc_pydoc  = function('s:ViewDoc_pydoc')
-let g:ViewDoc_python = function('s:ViewDoc_pydoc')
+" use function(s:SID().'Foo') instead of function('s:Foo') for
+" compatibility with Vim-7.3.x (7.3.762 at least)
+function s:SID()
+	return matchstr(expand('<sfile>'), '\zs<SNR>\d\+_\zeSID$')
+endfunction
+let g:ViewDoc_pydoc  = function(s:SID().'ViewDoc_pydoc')
+let g:ViewDoc_python = function(s:SID().'ViewDoc_pydoc')
 
 
 """ Internal

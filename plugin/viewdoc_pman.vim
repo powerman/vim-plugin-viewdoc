@@ -51,8 +51,13 @@ function s:ViewDoc_pman(topic, ...)
 		\ }
 endfunction
 
-let g:ViewDoc_pman = function('s:ViewDoc_pman')
-let g:ViewDoc_php  = function('s:ViewDoc_pman')
+" use function(s:SID().'Foo') instead of function('s:Foo') for
+" compatibility with Vim-7.3.x (7.3.762 at least)
+function s:SID()
+	return matchstr(expand('<sfile>'), '\zs<SNR>\d\+_\zeSID$')
+endfunction
+let g:ViewDoc_pman = function(s:SID().'ViewDoc_pman')
+let g:ViewDoc_php  = function(s:SID().'ViewDoc_pman')
 
 
 """ Internal

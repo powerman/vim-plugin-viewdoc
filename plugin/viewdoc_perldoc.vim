@@ -80,8 +80,13 @@ function s:ViewDoc_perldoc(topic, filetype, synid, ctx)
 	return h
 endfunction
 
-let g:ViewDoc_perl    = function('s:ViewDoc_perldoc')
-let g:ViewDoc_perldoc = function('s:ViewDoc_perldoc')
+" use function(s:SID().'Foo') instead of function('s:Foo') for
+" compatibility with Vim-7.3.x (7.3.762 at least)
+function s:SID()
+	return matchstr(expand('<sfile>'), '\zs<SNR>\d\+_\zeSID$')
+endfunction
+let g:ViewDoc_perl    = function(s:SID().'ViewDoc_perldoc')
+let g:ViewDoc_perldoc = function(s:SID().'ViewDoc_perldoc')
 
 
 """ Internal

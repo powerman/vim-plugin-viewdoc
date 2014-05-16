@@ -50,8 +50,13 @@ function s:ViewDoc_help(topic, filetype, synid, ctx)
 	return h
 endfunction
 
-let g:ViewDoc_help = function('s:ViewDoc_help')
-let g:ViewDoc_vim  = function('s:ViewDoc_help')
+" use function(s:SID().'Foo') instead of function('s:Foo') for
+" compatibility with Vim-7.3.x (7.3.762 at least)
+function s:SID()
+	return matchstr(expand('<sfile>'), '\zs<SNR>\d\+_\zeSID$')
+endfunction
+let g:ViewDoc_help = function(s:SID().'ViewDoc_help')
+let g:ViewDoc_vim  = function(s:SID().'ViewDoc_help')
 
 function s:ViewDoc_help_custom(topic, ft, ...)
 	let h = { 'ft':		'help',
@@ -84,5 +89,5 @@ function s:ViewDoc_help_custom(topic, ft, ...)
 	return h
 endfunction
 
-let g:ViewDoc_help_custom = function('s:ViewDoc_help_custom')
+let g:ViewDoc_help_custom = function(s:SID().'ViewDoc_help_custom')
 

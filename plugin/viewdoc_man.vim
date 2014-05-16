@@ -51,7 +51,12 @@ function s:ViewDoc_man(topic, ...)
 		\ }
 endfunction
 
-let g:ViewDoc_man = function('s:ViewDoc_man')
+" use function(s:SID().'Foo') instead of function('s:Foo') for
+" compatibility with Vim-7.3.x (7.3.762 at least)
+function s:SID()
+	return matchstr(expand('<sfile>'), '\zs<SNR>\d\+_\zeSID$')
+endfunction
+let g:ViewDoc_man = function(s:SID().'ViewDoc_man')
 if !exists('g:ViewDoc_DEFAULT')
 	let g:ViewDoc_DEFAULT = g:ViewDoc_man
 endif
