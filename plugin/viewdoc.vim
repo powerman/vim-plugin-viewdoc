@@ -30,6 +30,9 @@ endif
 if !exists('g:viewdoc_dontswitch')
 	let g:viewdoc_dontswitch=0
 endif
+if !exists('g:viewdoc_copy_to_search_reg')
+	let g:viewdoc_copy_to_search_reg=0
+endif
 
 """ Interface
 " - command
@@ -42,9 +45,15 @@ if !exists('g:no_plugin_abbrev') && !exists('g:no_viewdoc_abbrev')
 endif
 " - map
 if !exists('g:no_plugin_maps') && !exists('g:no_viewdoc_maps')
-	inoremap <unique> <F1>  <C-O>:call ViewDoc('new', '<cword>')<CR>
-	nnoremap <unique> <F1>  :call ViewDoc('new', '<cword>')<CR>
-	nnoremap <unique> K     :call ViewDoc('doc', '<cword>')<CR>
+	if g:viewdoc_copy_to_search_reg
+		inoremap <unique> <F1>  <C-O>:let @/ = '\<'.expand('<cword>').'\>'<CR><C-O>:call ViewDoc('new', '<cword>')<CR>
+		nnoremap <unique> <F1>  :let @/ = '\<'.expand('<cword>').'\>'<CR>:call ViewDoc('new', '<cword>')<CR>
+		nnoremap <unique> K     :let @/ = '\<'.expand('<cword>').'\>'<CR>:call ViewDoc('doc', '<cword>')<CR>
+	else
+		inoremap <unique> <F1>  <C-O>:call ViewDoc('new', '<cword>')<CR>
+		nnoremap <unique> <F1>  :call ViewDoc('new', '<cword>')<CR>
+		nnoremap <unique> K     :call ViewDoc('doc', '<cword>')<CR>
+	endif
 endif
 " - function
 " call ViewDoc('new', '<cword>')		auto-detect context/syntax and file type
