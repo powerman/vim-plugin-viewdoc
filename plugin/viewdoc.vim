@@ -74,7 +74,9 @@ function ViewDoc(target, topic, ...)
 	setlocal nolist
 	setlocal nobinary
 	setlocal nonumber
-	setlocal norelativenumber
+	if exists('&relativenumber')
+		setlocal norelativenumber
+	endif
 	if has('arabic')
 		setlocal noarabic
 	endif
