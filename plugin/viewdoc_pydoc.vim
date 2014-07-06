@@ -13,7 +13,7 @@ let g:loaded_viewdoc_pydoc = 1
 
 """ Options
 if !exists('g:viewdoc_pydoc_cmd')
-	let g:viewdoc_pydoc_cmd='/usr/bin/pydoc'	" user may want '/usr/bin/pydoc3.2'
+	let g:viewdoc_pydoc_cmd='pydoc'	                " user may want 'pydoc3.2'
 endif
 
 """ Interface

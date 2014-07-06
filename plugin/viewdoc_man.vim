@@ -15,7 +15,7 @@ let s:re_mansect = '\([0-9a-z]\+\)'
 
 """ Options
 if !exists('g:viewdoc_man_cmd')
-	let g:viewdoc_man_cmd='/usr/bin/man'	" user may want 'LANG=en /usr/bin/man'
+	let g:viewdoc_man_cmd='man'	        " user may want 'LANG=en man'
 endif
 
 """ Interface

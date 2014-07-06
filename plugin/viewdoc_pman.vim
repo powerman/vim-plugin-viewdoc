@@ -15,7 +15,7 @@ let s:re_mansect = '\([0-9]\)'
 
 """ Options
 if !exists('g:viewdoc_pman_cmd')
-	let g:viewdoc_pman_cmd='/usr/bin/pman'
+	let g:viewdoc_pman_cmd='pman'
 endif
 
 """ Interface
