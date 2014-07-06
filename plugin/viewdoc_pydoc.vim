@@ -28,8 +28,27 @@ endif
 
 """ Handlers
 
-function s:ViewDoc_pydoc(topic, ...)
-	return	{ 'cmd':	printf('%s %s | grep -v "no Python documentation found"', g:viewdoc_pydoc_cmd, shellescape(a:topic,1)),
+function s:ViewDoc_pydoc(topic, filetype, synid, ctx)
+	if a:ctx
+		let oldiskeyword = &iskeyword
+    		setlocal iskeyword+=.
+		let topic = printf('%s %s', shellescape(a:topic,1), shellescape(expand('<cword>'),1))
+    		let &iskeyword = oldiskeyword
+	else
+		let topic = shellescape(a:topic,1)
+	endif
+	" FIXME: remove duplicates from topic
+	" TODO: make topic an array
+	" TODO: implement better guessing for topic:
+	" aaaa.bbbb.ccc|ccc
+	"     try: pydoc cccccc
+	"     if failed: try: pydoc bbbb.ccccc
+	"     if failed: try: pydoc aaaa.bbbb.ccccc
+	" d|ddd
+	"     try: pydoc dddd
+	"     if failed: if some 'import dddd from mmmm' exists, try: pydoc mmmm.dddd
+	"     if failed: if some 'from mmmm import eeee as dddd' exists: try: pydoc mmmm.eeee
+	return	{ 'cmd':	printf('bash -c ''for topic in "$@" ; do if \! %s "$topic" | grep -q "no Python documentation found" ; then %s "$topic"; break; fi; done'' -- %s', g:viewdoc_pydoc_cmd, g:viewdoc_pydoc_cmd, topic),
 		\ 'ft':		'pydoc',
 		\ }
 endfunction
