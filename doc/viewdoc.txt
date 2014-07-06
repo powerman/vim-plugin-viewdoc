@@ -30,8 +30,8 @@ Flexible viewer for any documentation source (help/man/perldoc/etc.) for any
 file type inside Vim in easy to use, consistent, smart and configurable way.
 
  * You can configure how (keys/commands) documentation will be open.
-   By default it will replace standard mapping for key <K> and command |:help|
-   plus add mapping for <F1> key and new commands |:man|, |:doc|, etc.
+   By default it will replace standard mapping for key <K> and commands |:help|
+   and |:h| plus add mapping for <F1> key and new commands |:man|, |:doc|, etc.
 
  * You can configure where (buffer/window/tab) documentation will be open.
    Can open new docs in one dedicated (<K>) or new (<F1>) buffer/window/tab. 
@@ -162,6 +162,8 @@ Added by help handler:~
 
 :help[!] {topic}
 :help[!] <cword>
+:h[!] {topic}
+:h[!] <cword>
 	Abbrev for |:ViewDocHelp|.
 	To disable use |g:no_viewdoc_abbrev|.
 
@@ -257,7 +259,7 @@ General:~
 g:no_viewdoc_abbrev				*g:no_viewdoc_abbrev* 
 g:no_plugin_abbrev
 	Set any of these variables to disable abbrev:
-	|:doc|, |:man|, |:help|, |:perldoc|, |:pydoc|, |:pman|, |:infman|.
+	|:doc|, |:man|, |:help|, |:h|, |:perldoc|, |:pydoc|, |:pman|, |:infman|.
 
 g:no_viewdoc_maps				*g:no_viewdoc_maps* 
 g:no_plugin_maps
@@ -486,7 +488,7 @@ Viewing Vim help using this plugin have some advantages:
  * smart detection (<F1> on "&opt" will show help for 'opt', etc.)
  * and, of course, using <q> to close help
 
-Added commands: |:help| |:ViewDocHelp|.
+Added commands: |:help| |:h| |:ViewDocHelp|.
 
 ------------------------------------------------------------------------------
 Handler: help_custom				*ViewDoc_help_custom*
