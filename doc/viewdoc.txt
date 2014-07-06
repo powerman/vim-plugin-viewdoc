@@ -255,7 +255,7 @@ Added by infman handler:~
 
 Added by ri handler:~
 
-:vri[!] {topic}				*:vri*
+:rdoc[!] {topic}				*:rdoc*
 	Abbrev for |:ViewDocRi|.
 	To disable use |g:no_viewdoc_abbrev|.
 
@@ -272,8 +272,8 @@ General:~
 g:no_viewdoc_abbrev				*g:no_viewdoc_abbrev* 
 g:no_plugin_abbrev
 	Set any of these variables to disable abbrev:
-	|:doc|, |:man|, |:help|, |:perldoc|, |:pydoc|, |:pman|,
-        |:infman|, |:ri|.
+	|:doc|, |:man|, |:help|, |:h|, |:perldoc|, |:pydoc|, |:pman|,
+        |:infman|, |:rdoc|.
 
 g:no_viewdoc_maps				*g:no_viewdoc_maps* 
 g:no_plugin_maps
@@ -354,10 +354,14 @@ g:viewdoc_infman_cmd="emu-g"			*g:viewdoc_infman_cmd*
 
 Added by ri handler:~
 
-g:viewdoc_ri_cmd ="ri --no-pager --format=rdoc" (default)   *g:viewdoc_ri_cmd*
+g:viewdoc_ri_cmd ="ri" (default)                *g:viewdoc_ri_cmd*
 	Should contain command to run `ri`. You may wanna change it, for ex.
 	to force different version of ri: >
-	    let g:viewdoc_ri_cmd='/usr/bin/ri'
+	    let g:viewdoc_ri_cmd='ri20'
+
+g:viewdoc_ri_format ="markdown" (default)       *g:viewdoc_ri_format*
+	Should contain value for `--format` option for `ri`. >
+	    let g:viewdoc_ri_cmd='rdoc'
 
 Example configuration: full screen~
  * no tabs
@@ -575,7 +579,7 @@ Handler: ri					*ViewDoc_ri*
 
 Show doc using |g:viewdoc_ri_cmd| command when {filetype} is "ruby" or "rdoc".
 
-Added commands: |:ri| |:ViewDocRi|.
+Added commands: |:rdoc| |:ViewDocRi|.
 Added settings: |g:viewdoc_ri_cmd|.
 
 ==============================================================================
