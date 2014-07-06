@@ -20,6 +20,7 @@ Contents:
 	pydoc			|ViewDoc_pydoc|
 	pman			|ViewDoc_pman|
 	infman			|ViewDoc_infman|
+	ri			|ViewDoc_ri|
     Source and issue tracker	|viewdoc-source|
     License			|viewdoc-license|
 
@@ -68,6 +69,7 @@ file type inside Vim in easy to use, consistent, smart and configurable way.
    - pydoc (python)
    - pman (php)
    - OS Inferno man pages
+   - ri (ruby)
 
  * Support for new documentation sources and file types can be easily added by
    external plugins or within ~/.vimrc file.
@@ -251,6 +253,17 @@ Added by infman handler:~
 	    :infman 2 tim<Tab>	" auto-complete {topic} for section 2 only
 	    :infman time(<Tab>	" auto-complete {sect}
 
+Added by ri handler:~
+
+:vri[!] {topic}				*:vri*
+	Abbrev for |:ViewDocRi|.
+	To disable use |g:no_viewdoc_abbrev|.
+
+:ViewDocRi[!] {topic}				*:ViewDocRi*
+	Show Ruby documentation for given {topic}.
+
+	Works in same way as |:ViewDoc| with {filetype}=ruby.
+
 ==============================================================================
 SETTINGS					*viewdoc-settings*
 
@@ -259,7 +272,8 @@ General:~
 g:no_viewdoc_abbrev				*g:no_viewdoc_abbrev* 
 g:no_plugin_abbrev
 	Set any of these variables to disable abbrev:
-	|:doc|, |:man|, |:help|, |:h|, |:perldoc|, |:pydoc|, |:pman|, |:infman|.
+	|:doc|, |:man|, |:help|, |:perldoc|, |:pydoc|, |:pman|,
+        |:infman|, |:ri|.
 
 g:no_viewdoc_maps				*g:no_viewdoc_maps* 
 g:no_plugin_maps
@@ -337,6 +351,14 @@ g:viewdoc_infman_cmd="emu-g"			*g:viewdoc_infman_cmd*
 
 						*viewdoc-settings-examples*
 						*viewdoc-fullscreen*
+
+Added by ri handler:~
+
+g:viewdoc_ri_cmd ="ri --no-pager --format=rdoc" (default)   *g:viewdoc_ri_cmd*
+	Should contain command to run `ri`. You may wanna change it, for ex.
+	to force different version of ri: >
+	    let g:viewdoc_ri_cmd='/usr/bin/ri'
+
 Example configuration: full screen~
  * no tabs
  * one window
@@ -547,6 +569,14 @@ Show doc using |g:viewdoc_infman_cmd| command when {filetype} is "limbo" or
 
 Added commands: |:infman| |:ViewDocInfman|.
 Added settings: |g:viewdoc_infman_cmd|.
+
+------------------------------------------------------------------------------
+Handler: ri					*ViewDoc_ri*
+
+Show doc using |g:viewdoc_ri_cmd| command when {filetype} is "ruby" or "rdoc".
+
+Added commands: |:ri| |:ViewDocRi|.
+Added settings: |g:viewdoc_ri_cmd|.
 
 ==============================================================================
 SOURCE AND ISSUE TRACKER			*viewdoc-source*
