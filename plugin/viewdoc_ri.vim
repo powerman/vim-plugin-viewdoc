@@ -22,7 +22,7 @@ endif
 """ Interface
 " - command
 command -bar -bang -nargs=1 ViewDocRi
-	\ call ViewDoc('<bang>'=='' ? 'new' : 'doc', <f-args>, 'rdoc')
+	\ call ViewDoc('<bang>'=='' ? 'new' : 'doc', <f-args>, 'ri')
 " - abbrev
 if !exists('g:no_plugin_abbrev') && !exists('g:no_viewdoc_abbrev')
 	cnoreabbrev <expr> rdoc   getcmdtype()==':' && getcmdline()=='rdoc'  ? 'ViewDocRi'  : 'rdoc'
