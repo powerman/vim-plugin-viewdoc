@@ -86,11 +86,11 @@ MAPPINGS					*viewdoc-mappings*
 
 Global:~
 
-<F1>	Open doc for <cword> (word under cursor) in new [Scratch] buffer.
+<F1>	Open doc for <cword> (word under cursor) in new "[DocN]" buffer.
 	To disable use |g:no_viewdoc_maps|.
 
-K	Open doc for <cword> in existing [Doc] buffer, replacing it current
-	contents (will create [Doc] buffer if it doesn't exists yet).
+K	Open doc for <cword> in existing "[Doc]" buffer, replacing it current
+	contents (will create "[Doc]" buffer if it doesn't exists yet).
 	To disable use |g:no_viewdoc_maps|.
 
 Local to buffer with documentation:~
@@ -127,8 +127,8 @@ General:~
 	surrounding text (which wasn't included in expand("<cword>") because
 	of 'iskeyword' value).
 
-	By default will open documentation in new [Scratch] buffer, but when
-	[!] is added will open doc in existing [Doc] buffer (will create it if
+	By default will open documentation in new "[DocN]" buffer, but when
+	[!] is added will open doc in existing "[Doc]" buffer (will create it if
 	not exists yet). Will this buffer open in current window, new window
 	or new tab depends on |viewdoc-settings|.
 
@@ -285,7 +285,7 @@ g:viewdoc_open		="tabnew" (default)	*g:viewdoc_open*
 	Control where documentation will be open by choosing Vim command used
 	to open new window/tab. You can use any similar commands supported by
 	Vim. New documentation buffer will be opened using: >
-	    execute g:viewdoc_open	    " to create new [Scratch] buffer
+	    execute g:viewdoc_open	    " to create new [DocN] buffer
 	    execute g:viewdoc_open [Doc]    " to create new [Doc] buffer
 
 g:viewdoc_only		=0 (default)		*g:viewdoc_only*
@@ -401,9 +401,9 @@ ViewDoc({target}, '<cword>')
 	This function handle all |viewdoc-commands|.
 
 	{target} can be "new" or "doc".
-	If it "new", then documentation will be open in new [Scratch] buffer.
-	If it "doc", then documentation will be open in existing [Doc] buffer
-	(new [Doc] buffer will be created if it doesn't exists yet).
+	If it "new", then documentation will be open in new "[DocN]" buffer.
+	If it "doc", then documentation will be open in existing "[Doc]" buffer
+	(new "[Doc]" buffer will be created if it doesn't exists yet).
 	Using {target}=="doc" is same as using |viewdoc-commands| with [!].
 
 	Other parameters documented in |:ViewDoc|.

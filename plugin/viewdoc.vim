@@ -14,6 +14,9 @@ let g:loaded_viewdoc = 1
 """ Constants
 let s:bufname = '[Doc]'
 
+""" Variables
+let s:bufid = 0
+
 """ Options
 if !exists('g:viewdoc_open')
 	let g:viewdoc_open='tabnew'
@@ -234,13 +237,15 @@ function s:Prev()
 endfunction
 
 " call s:OpenBuf('doc')		open existing '[Doc]' buffer (create if not exists)
-" call s:OpenBuf('new')		create and open new '[Scratch]' buffer
+" call s:OpenBuf('new')		create and open new '[DocN]' buffer
 function s:OpenBuf(target)
 	let bufname = escape(s:bufname, '[]\')
 	let [tabnr, winnr, bufnr] = s:FindBuf(bufname)
 
 	if a:target == 'new'
-		execute g:viewdoc_open
+		let s:bufid = s:bufid + 1
+		let bufname = substitute(bufname, '\(\]\?\)$', s:bufid . '\1', '')
+		execute g:viewdoc_open . ' ' . bufname
 	elseif tabnr == -1
 		execute g:viewdoc_open . ' ' . bufname
 	else
