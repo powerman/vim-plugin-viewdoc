@@ -7,7 +7,7 @@ let b:did_ftplugin_viewdoc = 1
 if exists(':AnsiEsc')
 	AnsiEsc
 else
-	echomsg 'Require improved AnsiEsc plugin https://github.com/powerman/AnsiEsc.vim'
+	echomsg 'Require Improved AnsiEsc http://www.vim.org/scripts/script.php?script_id=4979'
 endif
 
 
