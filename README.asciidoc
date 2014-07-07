@@ -25,7 +25,7 @@ configurable way.
  * Supported documentation sources:
    - man pages
    - Vim's help
-   - custom documentation in vim help format
+   - custom documentation in vim help format: (CSS 2.1, CMake, LaTeX, …)
    - perldoc
    - pydoc (python)
    - pman (php)
