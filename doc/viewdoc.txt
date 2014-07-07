@@ -332,6 +332,12 @@ g:viewdoc_man_cmd   ="man" (default)            *g:viewdoc_man_cmd*
 	to force English manuals: >
 	    let g:viewdoc_man_cmd='LANG=en_US.UTF-8 man'
 <
+Added by perldoc handler:~
+
+g:viewdoc_perldoc_format ="text" (default)          *g:viewdoc_perldoc_format*
+	Should contain value for `-o` option for `perldoc`. >
+	    let g:viewdoc_perldoc_format='ansi'
+<
 Added by pydoc handler:~
 
 g:viewdoc_pydoc_cmd ="pydoc" (default)          *g:viewdoc_pydoc_cmd*
@@ -361,7 +367,7 @@ g:viewdoc_ri_cmd ="ri" (default)                *g:viewdoc_ri_cmd*
 
 g:viewdoc_ri_format ="markdown" (default)       *g:viewdoc_ri_format*
 	Should contain value for `--format` option for `ri`. >
-	    let g:viewdoc_ri_cmd='rdoc'
+	    let g:viewdoc_ri_format='rdoc'
 
 Example configuration: full screen~
  * no tabs

@@ -11,6 +11,11 @@ endif
 let g:loaded_viewdoc_perldoc = 1
 
 
+""" Options
+if !exists('g:viewdoc_perldoc_format')
+	let g:viewdoc_perldoc_format='text'     " user may want 'ansi'
+endif
+
 """ Interface
 " - command
 command -bar -bang -nargs=1 -complete=custom,s:CompletePerl ViewDocPerl
@@ -24,9 +29,13 @@ endif
 """ Handlers
 
 function s:ViewDoc_perldoc(topic, filetype, synid, ctx)
-	let h = { 'ft':		'perldoc',
+	let h = { 'ft':		'perldoc_' . g:viewdoc_perldoc_format,
 		\ 'topic':	a:topic,
 		\ }
+	if a:ctx && a:filetype == 'perldoc_ansi'
+		" remove tail of concealed ANSI sequence before <cword>
+		let h.topic = substitute(h.topic, '^[0-9]\+m', '', '')
+	endif
 	let synname = a:ctx ? synIDattr(a:synid,'name') : ''
 	if synname =~# 'SharpBang'
 		let h.topic = 'perlrun'
@@ -76,7 +85,8 @@ function s:ViewDoc_perldoc(topic, filetype, synid, ctx)
 		let h.topic = var == '' ? h.topic : var
 	endif
 	let t = shellescape(h.topic,1)
-	let h.cmd = printf('perldoc -- %s || perldoc -f %s || perldoc -v %s',t,t,t)
+	let h.cmd = printf('perldoc -o %s -- %s || perldoc -o %s -f %s || perldoc -o %s -v %s',
+		\ g:viewdoc_perldoc_format, t, g:viewdoc_perldoc_format, t, g:viewdoc_perldoc_format, t)
 	return h
 endfunction
 
@@ -87,6 +97,8 @@ function s:SID()
 endfunction
 let g:ViewDoc_perl    = function(s:SID().'ViewDoc_perldoc')
 let g:ViewDoc_perldoc = function(s:SID().'ViewDoc_perldoc')
+let g:ViewDoc_perldoc_text = function(s:SID().'ViewDoc_perldoc')
+let g:ViewDoc_perldoc_ansi = function(s:SID().'ViewDoc_perldoc')
 
 
 """ Internal
