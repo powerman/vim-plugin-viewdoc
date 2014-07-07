@@ -113,6 +113,7 @@ function ViewDoc(target, topic, ...)
 	setlocal nomodifiable nomodified
 
 	execute 'setlocal ft=' . h.ft
+	let b:topic = h.topic
 	if exists('h.tags')
 		execute 'setlocal tags^=' . h.tags
 	endif
@@ -222,6 +223,10 @@ endfunction
 function s:Next()
 	let b:stack = exists('b:stack') ? b:stack + 1	: 1
 	let docft   = exists('b:docft') ? b:docft	: &ft
+	if !exists('b:topic_stack')
+		let b:topic_stack = []
+	endif
+	call add(b:topic_stack, b:topic)
 	normal! msHmt`s
 	call ViewDoc('inplace', '<cword>', docft)
 endfunction
@@ -229,6 +234,7 @@ endfunction
 function s:Prev()
 	if exists('b:stack') && b:stack
 		let b:stack -= 1
+		let b:topic = remove(b:topic_stack, -1)
 		setlocal modifiable
 		undo
 		setlocal nomodifiable

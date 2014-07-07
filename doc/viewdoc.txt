@@ -11,6 +11,7 @@ Contents:
     Commands			|viewdoc-commands|
     Settings	    		|viewdoc-settings|
     Functions	    		|viewdoc-functions|
+    Variables	                |viewdoc-variables|
     Handlers	    		|viewdoc-handlers|
 	DEFAULT			|ViewDoc_DEFAULT|
 	man			|ViewDoc_man|
@@ -416,6 +417,14 @@ ViewDoc({target}, '<cword>')
 	Other parameters documented in |:ViewDoc|.
 
 ==============================================================================
+VARIABLES	                                *viewdoc-variables*
+
+May be useful for interaction with other plugins or user setup:~
+
+b:topic	                                        *b:topic* 
+	Contain current documentation's topic.
+
+==============================================================================
 HANDLERS					*viewdoc-handlers*
 
 						*ViewDoc_{filetype}()*
@@ -612,6 +621,7 @@ Artem Nezvigin (github: artnez)
 pawel.wiecek@tieto.com
  * Make viewdoc buffers easier to identify
  * LaTeX (help_custom) support
+ * Add b:topic
 
 Robin Schneider (github: ypid)
  * Add g:viewdoc_copy_to_search_reg
