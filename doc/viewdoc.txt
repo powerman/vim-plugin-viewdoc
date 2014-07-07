@@ -22,6 +22,7 @@ Contents:
 	infman			|ViewDoc_infman|
 	ri			|ViewDoc_ri|
     Source and issue tracker	|viewdoc-source|
+    Contributors            	|viewdoc-contributors|
     License			|viewdoc-license|
 
 ==============================================================================
@@ -592,6 +593,20 @@ Added settings: |g:viewdoc_ri_cmd|.
 SOURCE AND ISSUE TRACKER			*viewdoc-source*
 
 https://code.google.com/p/vim-plugin-viewdoc/
+
+==============================================================================
+CONTRIBUTORS            			*viewdoc-contributors*
+
+In alphabetical order:~
+
+Artem Nezvigin (github: artnez)
+ * Ruby (ri) support
+
+pawel.wiecek@tieto.com
+ * Make viewdoc buffers easier to identify
+
+Robin Schneider (github: ypid)
+ * Add g:viewdoc_copy_to_search_reg
 
 ==============================================================================
 LICENSE						*viewdoc-license*
