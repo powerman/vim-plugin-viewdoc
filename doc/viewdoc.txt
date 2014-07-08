@@ -23,6 +23,7 @@ Contents:
 	infman			|ViewDoc_infman|
 	ri			|ViewDoc_ri|
 	bashhelp		|ViewDoc_bashhelp|
+	info		        |ViewDoc_info|
     Source and issue tracker	|viewdoc-source|
     Contributors            	|viewdoc-contributors|
     License			|viewdoc-license|
@@ -74,6 +75,7 @@ file type inside Vim in easy to use, consistent, smart and configurable way.
    - OS Inferno man pages
    - ri (ruby)
    - bash's help
+   - GNU info (smart support for: awk, make, m4, automake)
 
  * Support for new documentation sources and file types can be easily added by
    external plugins or within ~/.vimrc file.
@@ -280,6 +282,41 @@ Added by bashhelp handler:~
 	Works in same way as |:ViewDoc| with {filetype}=sh except it
 	doesn't fallback to |:ViewDocMan|.
 
+Added by info handler:~
+
+:info[!] 				        *:info*
+:info[!] {file}
+:info[!] ({file}){node}
+:info[!] {file} {node}
+	Abbrev for |:ViewDocInfo|.
+	To disable use |g:no_viewdoc_abbrev|.
+
+:ViewDocInfo[!] 				*:ViewDocInfo*
+:ViewDocInfo[!] {file}
+:ViewDocInfo[!] ({file}){node}
+:ViewDocInfo[!] {file} {node}
+	Show GNU info documentation.
+	* with no parameters it will load info directory (dir)Top
+	* with one parameter it will load a named node (if parameter is in
+	  (file)node format) or top node of named manual
+	* with two or more parameters it will load specified node, 1st
+	  parameter is used as manual name, the rest are used as node name
+
+	Example invocations are: >
+	    :ViewDocInfo
+	    :ViewDocInfo gawk
+	    :ViewDocInfo (gawk)Functions
+	    :ViewDocInfo gawk Functions
+	    :ViewDocInfo gawk Getting Started
+<
+	Works in same way as |:ViewDoc| with {filetype}=info, plus:
+	* use (dir)Top as default without params
+	* support {file} as separate first param
+	* support {file} {node} as separate params
+	* provide auto-complete for {file} and {node}: >
+	    :info ga<Tab>	" auto-complete {file}
+	    :info gawk Ex<Tab>	" auto-complete {node} for gawk
+
 ==============================================================================
 SETTINGS					*viewdoc-settings*
 
@@ -371,9 +408,6 @@ Added by infman handler:~
 g:viewdoc_infman_cmd="emu-g"			*g:viewdoc_infman_cmd*
 	Should contain command able to run any OS Inferno commands (`emu-g`).
 
-						*viewdoc-settings-examples*
-						*viewdoc-fullscreen*
-
 Added by ri handler:~
 
 g:viewdoc_ri_cmd ="ri" (default)                *g:viewdoc_ri_cmd*
@@ -384,6 +418,32 @@ g:viewdoc_ri_cmd ="ri" (default)                *g:viewdoc_ri_cmd*
 g:viewdoc_ri_format ="markdown" (default)       *g:viewdoc_ri_format*
 	Should contain value for `--format` option for `ri`. >
 	    let g:viewdoc_ri_format='rdoc'
+
+Added by info handler:~
+
+g:viewdoc_info_cmd ="info" (default)            *g:viewdoc_info_cmd*
+	Should contain command to run `info`.
+
+g:viewdoc_info_path ="/usr/share/info" (default) *g:viewdoc_info_path*
+	Should contain directories to search for info files.
+
+g:ViewDoc_info_search                           *g:ViewDoc_info_search*
+g:ViewDocInfoIndex_{filetype} ="{index node}"   *g:ViewDocInfoIndex_{filetype}()*
+	For keyword search one needs to set two variables per filetype: >
+	    let g:ViewDoc_{ft} = function('ViewDoc_info_search')
+	    let g:ViewDocInfoIndex_{ft} = '{index node}'
+<
+	where {index node} can be either a string (name of index node of
+	manual, eg. "(gawk)Index") or a list (if there are multiple indices
+	that should be used).
+	Settings for awk, make, m4 and automake already included.
+	Example: >
+	    let g:ViewDoc_make = g:ViewDoc_info_search
+	    let g:ViewDocInfoIndex_make = '(make)Name Index'
+<
+
+						*viewdoc-settings-examples*
+						*viewdoc-fullscreen*
 
 Example configuration: full screen~
  * no tabs
@@ -637,6 +697,15 @@ if not found then fallback to |:ViewDoc_man|.
 
 Added commands: |:bashhelp| |:ViewDocBashHelp|.
 
+------------------------------------------------------------------------------
+Handler: info					*ViewDoc_info*
+
+Show doc using |g:viewdoc_info_cmd| command when {filetype} is "info" or "awk"
+or "make" or "m4" or "automake".
+
+Added commands: |:info| |:ViewDocInfo|.
+Added settings: |g:viewdoc_info_cmd|, |g:viewdoc_info_path|.
+
 ==============================================================================
 SOURCE AND ISSUE TRACKER			*viewdoc-source*
 
@@ -656,6 +725,7 @@ pawel.wiecek@tieto.com
  * Add b:topic
  * Support for multiple documentation providers per filetype
  * Bash's help support
+ * GNU info (smart support for: awk, make, m4, automake)
 
 Robin Schneider (github: ypid)
  * Add g:viewdoc_copy_to_search_reg

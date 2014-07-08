@@ -32,6 +32,7 @@ configurable way.
    - OS Inferno man pages
    - ri (ruby)
    - bash's help
+   - GNU info (smart support for: awk, make, m4, automake)
  * Support for new documentation sources and file types can be easily added by external plugins or within ~/.vimrc file.
  * You can have several documentation sources for same file type, and choose which one should be used on-the-fly.
  * Can be used as console man page viewer instead of `/usr/bin/man`.
