@@ -63,7 +63,7 @@ endif
 " call ViewDoc('doc', 'bash')			auto-detect only file type
 " call ViewDoc('new', ':execute', 'help')	no auto-detect
 function ViewDoc(target, topic, ...)
-	let h = s:GetHandle(a:topic, a:0 > 0 ? a:1 : &ft)
+	let hh = s:GetHandles(a:topic, a:0 > 0 ? a:1 : &ft)
 
 	if a:target != 'inplace'
 		let prev_tabpagenr = tabpagenr()
@@ -98,18 +98,25 @@ function ViewDoc(target, topic, ...)
 
 	setlocal modifiable
 	silent 1,$d
-	if exists('h.cmd')
-		call ViewDoc_SetShellToBash()
-		execute 'silent 0r ! ( ' . h.cmd . ' ) 2>/dev/null'
-		call ViewDoc_RestoreShell()
-		silent $d
-		execute 'normal! ' . (exists('h.line') ? h.line : 1) . 'G'
-		execute 'normal! ' . (exists('h.col')  ? h.col  : 1) . '|'
-		if exists('h.search')
-			call search(h.search)
+	for h in hh
+		if exists('h.cmd')
+			call ViewDoc_SetShellToBash()
+			execute 'silent 0r ! ( ' . h.cmd . ' ) 2>/dev/null'
+			call ViewDoc_RestoreShell()
+			silent $d
+			execute 'normal! ' . (exists('h.line') ? h.line : 1) . 'G'
+			execute 'normal! ' . (exists('h.col')  ? h.col  : 1) . '|'
+			if exists('h.search')
+				call search(h.search)
+			endif
+			normal! zt
 		endif
-		normal! zt
-	endif
+
+		let is_empty = line('$') == 1 && col('$') == 1
+		if !is_empty
+			break
+		endif
+	endfor
 	setlocal nomodifiable nomodified
 
 	execute 'setlocal ft=' . h.ft
@@ -132,8 +139,6 @@ function ViewDoc(target, topic, ...)
 	imap	 <silent> <buffer> <BS>		<C-O><C-T>
 	nmap	 <silent> <buffer> <CR>		<C-]>
 	nmap	 <silent> <buffer> <BS>		<C-T>
-
-	let is_empty = line('$') == 1 && col('$') == 1
 
 	if is_empty && !g:viewdoc_openempty
 		if a:target == 'inplace'
@@ -181,9 +186,9 @@ endfunction
 
 """ Internal
 
-" let h = s:GetHandle('<cword>', 'perl')	auto-detect syntax
-" let h = s:GetHandle('query', 'perl')		no auto-detect
-" Return: {
+" let hh = s:GetHandles('<cword>', 'perl')	auto-detect syntax
+" let hh = s:GetHandles('query', 'perl')	no auto-detect
+" Return: [{
 "	'topic':	'query',		ALWAYS
 "	'ft':		'perldoc',		ALWAYS
 "	'cmd':		'cat /path/to/file',	OPTIONAL
@@ -192,31 +197,44 @@ endfunction
 "	'tags':		'/path/to/tags',	OPTIONAL
 "	'search':	'regex',		OPTIONAL
 "	'docft':	'perl',			OPTIONAL
-" }
-function s:GetHandle(topic, ft)
+" },…]
+function s:GetHandles(topic, ft)
 	let cword = a:topic == '<cword>'
 	let topic = cword ? expand('<cword>')		: a:topic
 	let synid = cword ? synID(line('.'),col('.'),1)	: 0
 
-	let handler = exists('g:ViewDoc_{a:ft}') ? a:ft : 'DEFAULT'
-	if type(g:ViewDoc_{handler}) == type("")
-		let name = g:ViewDoc_{handler}
-		if name !~# '^g:'
-			let name = 'g:' . name
-		endif
-		if exists('{name}') && type({name}) == type(function("tr"))
-			unlet g:ViewDoc_{handler}
-			let g:ViewDoc_{handler} = {name}
+	let h_type = exists('g:ViewDoc_{a:ft}') ? a:ft : 'DEFAULT'
+	if type(g:ViewDoc_{h_type}) == type([])
+		if len(g:ViewDoc_{h_type}) == 0
+			let handlers = [ g:ViewDoc_DEFAULT ]
 		else
-			echohl ErrorMsg | echo 'No such function:' name | echohl None | sleep 2
-			return { 'ft': a:ft, 'topic': topic }
+			let handlers = g:ViewDoc_{h_type}
 		endif
+	else
+		let handlers = [ g:ViewDoc_{h_type} ]
 	endif
-	let h = g:ViewDoc_{handler}(topic, a:ft, synid, cword)
 
-	let h.topic	= exists('h.topic')	? h.topic	: topic
-	let h.ft	= exists('h.ft')	? h.ft		: a:ft
-	return h
+	let hh = []
+	for Handler in handlers
+		if type(Handler) == type("")
+			let name = Handler
+			if name !~# '^g:'
+				let name = 'g:' . name
+			endif
+			unlet Handler
+			if exists('{name}') && type({name}) == type(function("tr"))
+				let Handler = {name}
+			else
+				echohl ErrorMsg | echo 'No such function:' name | echohl None | sleep 2
+			endif
+		endif
+		let h = exists('Handler') ? Handler(topic, a:ft, synid, cword) : {}
+		let h.topic	= exists('h.topic')	? h.topic	: topic
+		let h.ft	= exists('h.ft')	? h.ft		: a:ft
+		call add(hh, h)
+		unlet Handler
+	endfor
+	return hh
 endfunction
 
 " Emulate doc stack a-la tag stack (<C-]> and <C-T>)

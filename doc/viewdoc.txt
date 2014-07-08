@@ -429,8 +429,8 @@ HANDLERS					*viewdoc-handlers*
 
 						*ViewDoc_{filetype}()*
 To add documentation handler for new {filetype} it's enough to create one
-global function (or global variable with same name assigned to Funcref)
-in ~/.vimrc (or some plugin): >
+global function (or global variable with same name assigned to Funcref or
+List of Funcrefs) in ~/.vimrc (or some plugin): >
 
     ViewDoc_{filetype}(topic, filetype, synid, have_context)
 <
@@ -481,6 +481,12 @@ For example, here is implementation of |ViewDoc_pydoc| handler: >
     endfunction
     let g:ViewDoc_pydoc  = function('s:ViewDoc_pydoc')
     let g:ViewDoc_python = function('s:ViewDoc_pydoc')
+
+Support for multiple documentation providers per filetype~
+
+You can set ViewDoc_{filetype} variable to List of Funcrefs (or names of
+global variables containing Funcref) - in this case each Funcref will be tried
+in order until one of them will return non-empty documentation.
 
 ------------------------------------------------------------------------------
 Handler: DEFAULT				*ViewDoc_DEFAULT*
@@ -622,6 +628,7 @@ pawel.wiecek@tieto.com
  * Make viewdoc buffers easier to identify
  * LaTeX (help_custom) support
  * Add b:topic
+ * Support for multiple documentation providers per filetype
 
 Robin Schneider (github: ypid)
  * Add g:viewdoc_copy_to_search_reg
