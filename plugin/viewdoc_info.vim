@@ -207,7 +207,7 @@ function s:CompleteInfo(ArgLead, CmdLine, CursorPos)
 	let parts = split(strpart(a:CmdLine, 0, a:CursorPos).'|')
 	if len(parts)>2
 		let heads = system(g:viewdoc_info_cmd . ' --subnodes ' .
-		\           shellescape(parts[1], 1) . " | grep '^File: .*,  Node:'")
+		\           shellescape(parts[1], 1) . " 2>/dev/null | grep '^File: .*,  Node:'")
 		return substitute(heads, 'File: [^\n]*,  Node: \([^,]*\),  [^\n]*', '\1', 'g')
 	else
 		return substitute(substitute(globpath(g:viewdoc_info_path, '*.info*'),
