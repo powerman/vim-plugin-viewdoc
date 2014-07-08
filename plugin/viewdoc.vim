@@ -101,6 +101,7 @@ function ViewDoc(target, topic, ...)
 	for h in hh
 		if exists('h.cmd')
 			call ViewDoc_SetShellToBash()
+			let h.cmd = substitute(h.cmd, '{{winwidth}}', winwidth('.'), 'g')
 			execute 'silent 0r ! ( ' . h.cmd . ' ) 2>/dev/null'
 			call ViewDoc_RestoreShell()
 			silent $d

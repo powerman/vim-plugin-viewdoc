@@ -85,7 +85,7 @@ function s:ViewDoc_perldoc(topic, filetype, synid, ctx)
 		let h.topic = var == '' ? h.topic : var
 	endif
 	let t = shellescape(h.topic,1)
-	let h.cmd = printf('perldoc -o %s -- %s || perldoc -o %s -f %s || perldoc -o %s -v %s',
+	let h.cmd = printf('perldoc -o %s -w width={{winwidth}} -- %s || perldoc -o %s -w width={{winwidth}} -f %s || perldoc -o %s -w width={{winwidth}} -v %s',
 		\ g:viewdoc_perldoc_format, t, g:viewdoc_perldoc_format, t, g:viewdoc_perldoc_format, t)
 	return h
 endfunction

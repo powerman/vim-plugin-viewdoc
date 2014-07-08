@@ -556,6 +556,9 @@ For example, here is implementation of |ViewDoc_pydoc| handler: >
     let g:ViewDoc_pydoc  = function('s:ViewDoc_pydoc')
     let g:ViewDoc_python = function('s:ViewDoc_pydoc')
 
+The `cmd` value may contain substring `{{winwidth}}` - it will be replaced
+with Doc's window width.
+
 Support for multiple documentation providers per filetype~
 
 You can set ViewDoc_{filetype} variable to List of Funcrefs (or names of
