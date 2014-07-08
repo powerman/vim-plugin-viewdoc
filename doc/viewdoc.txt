@@ -22,6 +22,7 @@ Contents:
 	pman			|ViewDoc_pman|
 	infman			|ViewDoc_infman|
 	ri			|ViewDoc_ri|
+	bashhelp		|ViewDoc_bashhelp|
     Source and issue tracker	|viewdoc-source|
     Contributors            	|viewdoc-contributors|
     License			|viewdoc-license|
@@ -72,6 +73,7 @@ file type inside Vim in easy to use, consistent, smart and configurable way.
    - pman (php)
    - OS Inferno man pages
    - ri (ruby)
+   - bash's help
 
  * Support for new documentation sources and file types can be easily added by
    external plugins or within ~/.vimrc file.
@@ -265,6 +267,18 @@ Added by ri handler:~
 	Show Ruby documentation for given {topic}.
 
 	Works in same way as |:ViewDoc| with {filetype}=ruby.
+
+Added by bashhelp handler:~
+
+:bashhelp[!] {topic}				*:bashhelp*
+	Abbrev for |:ViewDocBashHelp|.
+	To disable use |g:no_viewdoc_abbrev|.
+
+:ViewDocBashHelp[!] {topic}			*:ViewDocBashHelp*
+	Show bash's help for given {topic}.
+
+	Works in same way as |:ViewDoc| with {filetype}=sh except it
+	doesn't fallback to |:ViewDocMan|.
 
 ==============================================================================
 SETTINGS					*viewdoc-settings*
@@ -488,6 +502,10 @@ You can set ViewDoc_{filetype} variable to List of Funcrefs (or names of
 global variables containing Funcref) - in this case each Funcref will be tried
 in order until one of them will return non-empty documentation.
 
+For example, here is value of |ViewDoc_sh| variable: >
+
+    let g:ViewDoc_sh = [ g:ViewDoc_bashhelp, 'ViewDoc_man' ]
+
 ------------------------------------------------------------------------------
 Handler: DEFAULT				*ViewDoc_DEFAULT*
 
@@ -505,7 +523,7 @@ in ~/.vimrc): >
 ------------------------------------------------------------------------------
 Handler: man					*ViewDoc_man*
 
-Show doc using |g:viewdoc_man_cmd| command when {filetype} is "sh" or "man".
+Show doc using |g:viewdoc_man_cmd| command when {filetype} is "man".
 Also used as default handler, see |ViewDoc_DEFAULT|.
 
 Added commands: |:man| |:ViewDocMan|.
@@ -611,6 +629,14 @@ Show doc using |g:viewdoc_ri_cmd| command when {filetype} is "ruby" or "rdoc".
 Added commands: |:rdoc| |:ViewDocRi|.
 Added settings: |g:viewdoc_ri_cmd|.
 
+------------------------------------------------------------------------------
+Handler: bashhelp				*ViewDoc_bashhelp*
+
+Show doc using bash's `help` command when {filetype} is "sh",
+if not found then fallback to |:ViewDoc_man|.
+
+Added commands: |:bashhelp| |:ViewDocBashHelp|.
+
 ==============================================================================
 SOURCE AND ISSUE TRACKER			*viewdoc-source*
 
@@ -629,6 +655,7 @@ pawel.wiecek@tieto.com
  * LaTeX (help_custom) support
  * Add b:topic
  * Support for multiple documentation providers per filetype
+ * Bash's help support
 
 Robin Schneider (github: ypid)
  * Add g:viewdoc_copy_to_search_reg
