@@ -712,7 +712,7 @@ Added settings: |g:viewdoc_info_cmd|, |g:viewdoc_info_path|.
 ==============================================================================
 SOURCE AND ISSUE TRACKER			*viewdoc-source*
 
-https://code.google.com/p/vim-plugin-viewdoc/
+https://github.com/powerman/vim-plugin-viewdoc
 
 ==============================================================================
 CONTRIBUTORS            			*viewdoc-contributors*
