@@ -18,6 +18,7 @@ Contents:
 	help			|ViewDoc_help|
 	help_custom		|ViewDoc_help_custom|
 	perldoc			|ViewDoc_perldoc|
+	godoc			|ViewDoc_godoc|
 	pydoc			|ViewDoc_pydoc|
 	pman			|ViewDoc_pman|
 	infman			|ViewDoc_infman|
@@ -70,6 +71,7 @@ file type inside Vim in easy to use, consistent, smart and configurable way.
    - Vim's help
    - custom documentation in vim help format
    - perldoc
+   - godoc
    - pydoc (python)
    - pman (php)
    - OS Inferno man pages
@@ -196,6 +198,22 @@ Added by perldoc handler:~
 
 	Works in same way as |:ViewDoc| with {filetype}=perl, plus:
 	* provide auto-complete for variables/function/modules/POD/etc.
+
+Added by godoc handler:~
+
+:godoc[!] {package}				*:godoc*
+:godoc[!] {package} {identifier}
+:godoc[!] <cword>
+	Abbrev for |:ViewDocGo|.
+	To disable use |g:no_viewdoc_abbrev|.
+
+:ViewDocGo[!] {package}				*:ViewDocGo*
+:ViewDocGo[!] {package} {identifier}
+:ViewDocGo[!] <cword>
+	Show golang documentation for given {package}.
+
+	Works in same way as |:ViewDoc| with {filetype}=go, plus:
+	* provide auto-complete for packages and exported identifiers.
 
 Added by pydoc handler:~
 
@@ -325,7 +343,7 @@ General:~
 g:no_viewdoc_abbrev				*g:no_viewdoc_abbrev* 
 g:no_plugin_abbrev
 	Set any of these variables to disable abbrev:
-	|:doc|, |:man|, |:help|, |:h|, |:perldoc|, |:pydoc|, |:pman|,
+	|:doc|, |:man|, |:help|, |:h|, |:perldoc|, |:godoc|, |:pydoc|, |:pman|,
         |:infman|, |:rdoc|.
 
 g:no_viewdoc_maps				*g:no_viewdoc_maps* 
@@ -390,6 +408,12 @@ Added by perldoc handler:~
 g:viewdoc_perldoc_format ="text" (default)          *g:viewdoc_perldoc_format*
 	Should contain value for `-o` option for `perldoc`. >
 	    let g:viewdoc_perldoc_format='ansi'
+<
+Added by godoc handler:~
+
+g:viewdoc_godoc_cmd ="godoc" (default)          *g:viewdoc_godoc_cmd*
+	Should contain command to run `godoc`. >
+	    let g:viewdoc_godoc_cmd='/path/to/godoc'
 <
 Added by pydoc handler:~
 
@@ -658,6 +682,15 @@ Handler: perldoc				*ViewDoc_perldoc*
 Show doc using `perldoc` command when {filetype} is "perl" or "perldoc".
 
 Added commands: |:perldoc| |:ViewDocPerl|.
+
+------------------------------------------------------------------------------
+Handler: godoc					*ViewDoc_godoc*
+
+Show doc using |g:viewdoc_godoc_cmd| command when {filetype} is "go".
+Show package source using |g:viewdoc_godoc_cmd| command when {filetype} is "godoc".
+
+Added commands: |:godoc| |:ViewDocGo|.
+Added settings: |g:viewdoc_godoc_cmd|.
 
 ------------------------------------------------------------------------------
 Handler: pydoc					*ViewDoc_pydoc*

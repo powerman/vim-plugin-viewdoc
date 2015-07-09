@@ -22,6 +22,7 @@ configurable way.
    - Vim's help
    - custom documentation in vim help format: (CSS 2.1, CMake, LaTeX, …)
    - perldoc
+   - godoc
    - pydoc (python)
    - pman (php)
    - OS Inferno man pages
