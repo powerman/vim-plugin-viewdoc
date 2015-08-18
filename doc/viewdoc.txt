@@ -303,37 +303,33 @@ Added by bashhelp handler:~
 Added by info handler:~
 
 :info[!] 				        *:info*
-:info[!] {file}
+:info[!] {topic}
 :info[!] ({file}){node}
-:info[!] {file} {node}
+:info[!] {menu-item} ...
 	Abbrev for |:ViewDocInfo|.
 	To disable use |g:no_viewdoc_abbrev|.
 
 :ViewDocInfo[!] 				*:ViewDocInfo*
-:ViewDocInfo[!] {file}
+:ViewDocInfo[!] {topic}
 :ViewDocInfo[!] ({file}){node}
-:ViewDocInfo[!] {file} {node}
+:ViewDocInfo[!] {menu-item} ...
 	Show GNU info documentation.
 	* with no parameters it will load info directory (dir)Top
-	* with one parameter it will load a named node (if parameter is in
-	  (file)node format) or top node of named manual
-	* with two or more parameters it will load specified node, 1st
-	  parameter is used as manual name, the rest are used as node name
+	* with one or more parameters, it behaves identically to GNU Info.
 
 	Example invocations are: >
 	    :ViewDocInfo
-	    :ViewDocInfo gawk
-	    :ViewDocInfo (gawk)Functions
-	    :ViewDocInfo gawk Functions
-	    :ViewDocInfo gawk Getting Started
+	    :ViewDocInfo ls
+	    :ViewDocInfo (coreutils)
+	    :ViewDocInfo (coreutils)ls\ invocation
+	    :ViewDocInfo Bash Bash\ Features Aliases
 <
-	Works in same way as |:ViewDoc| with {filetype}=info, plus:
-	* use (dir)Top as default without params
-	* support {file} as separate first param
-	* support {file} {node} as separate params
-	* provide auto-complete for {file} and {node}: >
-	    :info ga<Tab>	" auto-complete {file}
-	    :info gawk Ex<Tab>	" auto-complete {node} for gawk
+	Features auto-complete for {topic} and ({file}){node} separately: >
+	    :ViewDocInfo <Tab>		" auto-complete {topic}
+	    :ViewDocInfo Fil<Tab>	" auto-complete {topic}
+	    :ViewDocInfo (co<Tab>	" auto-complete ({file}){node}
+<
+	Note that completion is implemented only for the first argument.
 
 ==============================================================================
 SETTINGS					*viewdoc-settings*
