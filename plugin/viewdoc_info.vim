@@ -212,19 +212,25 @@ endfunction
 " node names from manual, whose name is param1 when invoked for any other
 " parameter
 function s:CompleteInfo(ArgLead, CmdLine, CursorPos)
-	let part = join(split(substitute(a:CmdLine[0:a:CursorPos], '\\', '', 'g'))[1:], ' ')
+	let line = join(split(a:CmdLine[0:a:CursorPos])[1:], ' ')
+	let lead = substitute(a:ArgLead, '\\', '', 'g')
+	let trail = split(line[:-len(a:ArgLead)-1], '[^\\]\zs ')
 	let base_cmd = g:viewdoc_info_cmd . " '(dir)Top' 2>/dev/null"
 	let keys_pipe = ' | sed -n ''s/\* \([^:]*\): (.*/\1/p'''
-	let ext_pipe = ' | sed -n ''s/\* [^:]*: \(([^.]*\)\..*/\1/p'' | sort | uniq'
-	if len(part) == 0
-		return escape(system(base_cmd . keys_pipe), ' ')
+	if len(trail) == 0
+		if len(lead) == 0
+			return escape(system(base_cmd . keys_pipe), ' ')
+		endif
+		let pipe = keys_pipe
+		if lead[0] == '('
+			let pipe = ' | sed -n ''s/\* [^:]*: \(([^.]*\)\..*/\1/p'' | sort | uniq'
+		endif
+	else
+		let pipe = ' | sed -e ''/^\* Menu:/,$ !d'' -n -e ''s/^\* \([^:]*\)::.*/\1/ p'''
+		let args = join(map(trail, 'shellescape(v:val)'), ' ')
+		let base_cmd = substitute(base_cmd, "'(dir)Top'", args, '')
 	endif
-	let pipe = keys_pipe
-	if part[0] == '('
-		let pipe = ext_pipe
-	endif
-	let part = part . (len(a:ArgLead) == 0 ? ' ' : '')
-	return escape(system(base_cmd . pipe . " | sed -n " . shellescape("/^" . part . "/p")), ' ')
+	return escape(system(base_cmd . pipe . " | sed -n " . shellescape("/^" . lead . "/Ip")), ' ')
 endfunction
 
 

@@ -328,8 +328,8 @@ Added by info handler:~
 	    :ViewDocInfo <Tab>		" auto-complete {topic}
 	    :ViewDocInfo Fil<Tab>	" auto-complete {topic}
 	    :ViewDocInfo (co<Tab>	" auto-complete ({file}){node}
+	    :ViewDocInfo Bash Bash\ Fe<Tab>	"auto-complete subtopic
 <
-	Note that completion is implemented only for the first argument.
 
 ==============================================================================
 SETTINGS					*viewdoc-settings*
