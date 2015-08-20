@@ -166,9 +166,13 @@ endfunction
 
 " Handler for command line commands
 function s:ViewDoc_info_cmd(topic, ...)
+	let nothing = { 'ft': 'info', 'cmd': 'false', 'topic': a:topic }
 	let h = { 'ft': 'info',
 		\ 'topic': s:FixNodeName(a:topic) }
 	let h.cmd = printf('%s %s -o-', g:viewdoc_info_cmd, shellescape(h.topic, 1))
+	if h.topic == ''
+		return nothing
+	endif
 	return h
 endfunction
 
