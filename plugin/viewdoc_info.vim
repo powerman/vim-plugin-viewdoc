@@ -219,7 +219,7 @@ function s:CompleteInfo(ArgLead, CmdLine, CursorPos)
 	let line = join(split(a:CmdLine[0:a:CursorPos])[1:], ' ')
 	let lead = substitute(a:ArgLead, '\\', '', 'g')
 	let trail = split(line[:-len(a:ArgLead)-1], '[^\\]\zs ')
-	let base_cmd = g:viewdoc_info_cmd . " '(dir)Top' 2>/dev/null"
+	let base_cmd = g:viewdoc_info_cmd . " '(dir)Top' -o- 2>/dev/null"
 	let keys_pipe = ' | sed -n ''s/\* \([^:]*\): (.*/\1/p'''
 	if len(trail) == 0
 		if len(lead) == 0
