@@ -26,7 +26,7 @@ endif
 " Can be called:
 "  - with no parameters, will load info directory
 "  - with one or more parameters, should behave identically to GNU Info.
-command -bar -bang -nargs=* -complete=custom,s:CompleteInfo ViewDocInfo
+command -bar -bang -nargs=* -complete=customlist,s:CompleteInfo ViewDocInfo
 	\ call ViewDoc('<bang>'=='' ? 'new' : 'doc', s:ParamsToNode(<f-args>), 'infocmd')
 " - abbrev
 if !exists('g:no_plugin_abbrev') && !exists('g:no_viewdoc_abbrev')
@@ -223,7 +223,7 @@ function s:CompleteInfo(ArgLead, CmdLine, CursorPos)
 	let keys_pipe = ' | sed -n ''s/\* \([^:]*\): (.*/\1/p'''
 	if len(trail) == 0
 		if len(lead) == 0
-			return escape(system(base_cmd . keys_pipe), ' ')
+			return split(escape(system(base_cmd . keys_pipe), ' '), "\n")
 		endif
 		let pipe = keys_pipe
 		if lead[0] == '('
@@ -234,7 +234,7 @@ function s:CompleteInfo(ArgLead, CmdLine, CursorPos)
 		let args = join(map(trail, 'shellescape(v:val)'), ' ')
 		let base_cmd = substitute(base_cmd, "'(dir)Top'", args, '')
 	endif
-	return escape(system(base_cmd . pipe . " | sed -n " . shellescape("/^" . lead . "/Ip")), ' ')
+	return split(escape(system(base_cmd . pipe . " | sed -n " . shellescape("/^" . lead . "/Ip")), ' '), "\n")
 endfunction
 
 
