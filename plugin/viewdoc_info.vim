@@ -1,5 +1,5 @@
 " Author:               pawel.wiecek@tieto.com
-" Maintainer:           pawel.wiecek@tieto.com
+" Maintainer:           john.ch.fr@gmail.com
 " Version:              see in viewdoc.vim
 " Last Modified:        see in viewdoc.vim
 " License:              see in viewdoc.vim
