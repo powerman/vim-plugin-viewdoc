@@ -191,7 +191,7 @@ function s:ParamsToNode(...)
 		endif
 		let sh_args =  join(map(args, 'shellescape(v:val)'), ' ')
 		return system(printf('%s %s -o- | head -n 2', g:viewdoc_info_cmd, sh_args) .
-		\             ' | sed -n ''s/^File: \(.*\)\.info,  Node: \([^,]*\),.*/(\1)\2/p''')
+		\             ' | sed -n ''s/^File: \(.*\)\.info.*,  Node: \([^,]*\),.*/(\1)\2/p''')
 	endif
 endfunction
 
