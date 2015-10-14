@@ -13,8 +13,8 @@ let g:loaded_viewdoc_help = 1
 
 """ Interface
 " - command
-command -bar -bang -nargs=1 -complete=help ViewDocHelp
-	\ call ViewDoc('<bang>'=='' ? 'new' : 'doc', <f-args>, 'help')
+command -bar -bang -nargs=? -complete=help ViewDocHelp
+	\ call ViewDoc('<bang>'=='' ? 'new' : 'doc', <q-args>, 'help')
 " - abbrev
 if !exists('g:no_plugin_abbrev') && !exists('g:no_viewdoc_abbrev')
 	cnoreabbrev <expr> h        getcmdtype()==':' && getcmdline()=='h'     ? 'ViewDocHelp' : 'h'
