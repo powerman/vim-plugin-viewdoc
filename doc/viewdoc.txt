@@ -392,6 +392,12 @@ g:viewdoc_copy_to_search_reg	=0 (default)		*g:viewdoc_copy_to_search_reg*
 	search register which allows to easily search in the documentation for
 	occurrences of this word.
 
+g:viewdoc_winwidth_max		=0 (default)		*g:viewdoc_winwidth_max*
+        If set, limits the text width passed to doc formatters, so paragraphs
+        width can be limited to |g:viewdoc_winwidth_max| characters rather than
+        stretch across very wide windows.  Some documentation is pre-formatted,
+        and this will have no effect.
+
 Added by man handler:~
 
 g:viewdoc_man_cmd   ="man" (default)            *g:viewdoc_man_cmd*

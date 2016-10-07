@@ -36,6 +36,9 @@ endif
 if !exists('g:viewdoc_copy_to_search_reg')
 	let g:viewdoc_copy_to_search_reg=0
 endif
+if !exists('g:viewdoc_winwidth_max')
+	let g:viewdoc_winwidth_max=0
+endif
 
 """ Interface
 " - command
@@ -101,7 +104,8 @@ function ViewDoc(target, topic, ...)
 	for h in hh
 		if exists('h.cmd')
 			call ViewDoc_SetShellToBash()
-			let h.cmd = substitute(h.cmd, '{{winwidth}}', winwidth('.'), 'g')
+			let winwidth = g:viewdoc_winwidth_max > 0 ? min([winwidth('.'), g:viewdoc_winwidth_max]) : winwidth('.')
+			let h.cmd = substitute(h.cmd, '{{winwidth}}', winwidth, 'g')
 			execute 'silent 0r ! ( ' . h.cmd . ' ) 2>/dev/null'
 			call ViewDoc_RestoreShell()
 			silent $d
