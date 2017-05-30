@@ -122,6 +122,7 @@ function ViewDoc(target, topic, ...)
 			break
 		endif
 	endfor
+	" https://github.com/powerman/vim-plugin-viewdoc/issues/47
 	execute 'setlocal ft=' . h.ft
 	setlocal nomodifiable nomodified
 
