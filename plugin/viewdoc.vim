@@ -122,9 +122,9 @@ function ViewDoc(target, topic, ...)
 			break
 		endif
 	endfor
+	execute 'setlocal ft=' . h.ft
 	setlocal nomodifiable nomodified
 
-	execute 'setlocal ft=' . h.ft
 	let b:topic = h.topic
 	if exists('h.tags')
 		execute 'setlocal tags^=' . h.tags
