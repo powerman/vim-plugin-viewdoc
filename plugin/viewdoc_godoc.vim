@@ -13,7 +13,7 @@ let g:loaded_viewdoc_godoc = 1
 
 """ Options
 if !exists('g:viewdoc_godoc_cmd')
-	let g:viewdoc_godoc_cmd='go doc -cmd'
+	let g:viewdoc_godoc_cmd='go doc -cmd -all'
 endif
 
 """ Interface
@@ -83,12 +83,21 @@ function s:ViewDoc_go(topic, filetype, synid, ctx)
 	endif
 
 	if sym != ""
-		let h.cmd = printf('%s %s', g:viewdoc_godoc_cmd, shellescape(pkg.".".sym,1))
+		let h.search = '^func '.sym.'(\|^type '.sym.'\|\%(const\|var\|type\|\s\+\) '.pkg.'\s\+=\s'
 	else
-		let h.cmd = printf('%s %s', g:viewdoc_godoc_cmd, shellescape(pkg,1))
+		let h.search = '\%(const\|var\|type\|\s\+\) '.pkg.'\s\+=\s'
 	endif
 	let h.topic = pkg
+	let h.cmd = printf('%s %s', g:viewdoc_godoc_cmd, shellescape(pkg,1))
 	return h
+endfunction
+
+function s:ViewDoc_godoc(topic, filetype, synid, ctx)
+	return  { 'ft':         'go',
+		\ 'topic':      b:topic,
+		\ 'cmd':        printf('%s -src %s', g:viewdoc_godoc_cmd, shellescape(b:topic,1)),
+		\ 'search':     '^func '.a:topic.'(\|^type '.a:topic.'\|\%(const\|var\|type\|\s\+\) '.a:topic.'\s\+=\s',
+		\ }
 endfunction
 
 " use function(s:SID().'Foo') instead of function('s:Foo') for
@@ -97,4 +106,4 @@ function s:SID()
 	return matchstr(expand('<sfile>'), '\zs<SNR>\d\+_\zeSID$')
 endfunction
 let g:ViewDoc_go = function(s:SID().'ViewDoc_go')
-let g:ViewDoc_godoc = function(s:SID().'ViewDoc_go')
+let g:ViewDoc_godoc = function(s:SID().'ViewDoc_godoc')
