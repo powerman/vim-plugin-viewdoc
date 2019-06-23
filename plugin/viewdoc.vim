@@ -251,6 +251,10 @@ function s:Next()
 		let b:topic_stack = []
 	endif
 	call add(b:topic_stack, b:topic)
+	if !exists('b:docft_stack')
+		let b:docft_stack = []
+	endif
+	call add(b:docft_stack, docft)
 	normal! msHmt`s
 	call ViewDoc('inplace', '<cword>', docft)
 endfunction
@@ -259,8 +263,10 @@ function s:Prev()
 	if exists('b:stack') && b:stack
 		let b:stack -= 1
 		let b:topic = remove(b:topic_stack, -1)
+		let docft = remove(b:docft_stack, -1)
 		setlocal modifiable
 		undo
+		execute 'setlocal ft=' . docft
 		setlocal nomodifiable
 		normal! 'tzt`s
 	endif
