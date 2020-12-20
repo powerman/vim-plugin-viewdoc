@@ -5,7 +5,7 @@
 " URL:			see in viewdoc.vim
 " Description: ViewDoc handler for perldoc
 
-if exists('g:loaded_viewdoc_perldoc') || &cp || version < 700
+if exists('g:loaded_viewdoc_perldoc') || &cp || v:version < 700
 	finish
 endif
 let g:loaded_viewdoc_perldoc = 1
@@ -32,7 +32,7 @@ function s:ViewDoc_perldoc(topic, filetype, synid, ctx)
 	let h = { 'ft':		'perldoc_' . g:viewdoc_perldoc_format,
 		\ 'topic':	a:topic,
 		\ }
-	if a:ctx && a:filetype == 'perldoc_ansi'
+	if a:ctx && a:filetype ==# 'perldoc_ansi'
 		" remove tail of concealed ANSI sequence before <cword>
 		let h.topic = substitute(h.topic, '^[0-9]\+m', '', '')
 	endif
@@ -82,7 +82,7 @@ function s:ViewDoc_perldoc(topic, filetype, synid, ctx)
 		let var = substitute(var, '[\[{]$',      '',    '')
 		" ${a} -> $a,  ${^a} -> $^a,  but not ${^aa}
 		let var = substitute(var, '^\([$@%]\){\([^^].*\|\^.\)}$', '\1\2', '')
-		let h.topic = var == '' ? h.topic : var
+		let h.topic = var ==# '' ? h.topic : var
 	endif
 	let t = shellescape(h.topic,1)
 	let h.cmd = printf('perldoc -o %s -w width={{winwidth}} -- %s || perldoc -o %s -w width={{winwidth}} -f %s || perldoc -o %s -w width={{winwidth}} -v %s',

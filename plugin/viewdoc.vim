@@ -1,11 +1,11 @@
 " Maintainer: Alex Efros <powerman-asdf@ya.ru>
-" Version: 1.3
-" Last Modified: May 11, 2012
+" Version: 1.14
+" Last Modified: Dec 20, 2020
 " License: This file is placed in the public domain.
 " URL: http://www.vim.org/scripts/script.php?script_id=3893
 " Description: Flexible viewer for any documentation (help/man/perldoc/etc.)
 
-if exists('g:loaded_viewdoc') || &cp || version < 700
+if exists('g:loaded_viewdoc') || &cp || v:version < 700
 	finish
 endif
 let g:loaded_viewdoc = 1
@@ -68,7 +68,7 @@ endif
 function ViewDoc(target, topic, ...)
 	let hh = s:GetHandles(a:topic, a:0 > 0 ? a:1 : &ft)
 
-	if a:target != 'inplace'
+	if a:target !=# 'inplace'
 		let prev_tabpagenr = tabpagenr()
 		call s:OpenBuf(a:target)
 		let b:stack = 0
@@ -106,7 +106,11 @@ function ViewDoc(target, topic, ...)
 			call ViewDoc_SetShellToBash()
 			let winwidth = g:viewdoc_winwidth_max > 0 ? min([winwidth('.'), g:viewdoc_winwidth_max]) : winwidth('.')
 			let h.cmd = substitute(h.cmd, '{{winwidth}}', winwidth, 'g')
-			execute 'silent 0r ! ( ' . h.cmd . ' ) 2>/dev/null'
+			if !has('win16') && !has('win32') && !has('win64')
+			    execute 'silent 0r ! ( ' . h.cmd . ' ) 2>/dev/null'
+			else
+			    execute 'silent 0r ! ( ' . h.cmd . ' ) 2> nul'
+			endif
 			call ViewDoc_RestoreShell()
 			silent $d
 			execute 'normal! ' . (exists('h.line') ? h.line : 1) . 'G'
@@ -147,7 +151,7 @@ function ViewDoc(target, topic, ...)
 	nmap	 <silent> <buffer> <BS>		<C-T>
 
 	if is_empty && !g:viewdoc_openempty
-		if a:target == 'inplace'
+		if a:target ==# 'inplace'
 			call s:Prev()
 		else
 			call s:CloseBuf()
@@ -203,9 +207,9 @@ endfunction
 "	'tags':		'/path/to/tags',	OPTIONAL
 "	'search':	'regex',		OPTIONAL
 "	'docft':	'perl',			OPTIONAL
-" },…]
+" },...]
 function s:GetHandles(topic, ft)
-	let cword = a:topic == '<cword>'
+	let cword = a:topic ==# '<cword>'
 	let topic = cword ? expand('<cword>')		: a:topic
 	let synid = cword ? synID(line('.'),col('.'),1)	: 0
 
@@ -222,13 +226,13 @@ function s:GetHandles(topic, ft)
 
 	let hh = []
 	for Handler in handlers
-		if type(Handler) == type("")
+		if type(Handler) == type('')
 			let name = Handler
 			if name !~# '^g:'
 				let name = 'g:' . name
 			endif
 			unlet Handler
-			if exists('{name}') && type({name}) == type(function("tr"))
+			if exists('{name}') && type({name}) == type(function('tr'))
 				let Handler = {name}
 			else
 				echohl ErrorMsg | echo 'No such function:' name | echohl None | sleep 2
@@ -278,7 +282,7 @@ function s:OpenBuf(target)
 	let bufname = escape(s:bufname, '[]\')
 	let [tabnr, winnr, bufnr] = s:FindBuf(bufname)
 
-	if a:target == 'new'
+	if a:target ==# 'new'
 		let s:bufid = s:bufid + 1
 		let bufname = substitute(bufname, '\(\]\?\)$', s:bufid . '\1', '')
 		execute g:viewdoc_open . ' ' . bufname

@@ -5,7 +5,7 @@
 " URL:			see in viewdoc.vim
 " Description: ViewDoc handler for shell scripts
 
-if exists('g:loaded_viewdoc_bash') || &cp || version < 700
+if exists('g:loaded_viewdoc_bash') || &cp || v:version < 700
 	finish
 endif
 let g:loaded_viewdoc_bash = 1

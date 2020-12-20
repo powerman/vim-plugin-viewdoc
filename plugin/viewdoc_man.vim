@@ -5,7 +5,7 @@
 " URL:			see in viewdoc.vim
 " Description: ViewDoc handler for man pages (default handler)
 
-if exists('g:loaded_viewdoc_man') || &cp || version < 700
+if exists('g:loaded_viewdoc_man') || &cp || v:version < 700
 	finish
 endif
 let g:loaded_viewdoc_man = 1
@@ -69,7 +69,7 @@ endif
 " Autocomplete command in section:	2 tim	2 ti.*e
 function s:CompleteMan(ArgLead, CmdLine, CursorPos)
 	call ViewDoc_SetShellToBash()
-	if strpart(a:CmdLine, a:CursorPos - 1) == '('
+	if strpart(a:CmdLine, a:CursorPos - 1) ==# '('
 		let m = matchlist(a:CmdLine, '\s\(\S\+\)($')
 		if !len(m)
 			call ViewDoc_RestoreShell()

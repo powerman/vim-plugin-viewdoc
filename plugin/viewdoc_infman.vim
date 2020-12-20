@@ -5,7 +5,7 @@
 " URL:			see in viewdoc.vim
 " Description: ViewDoc handler for OS Inferno man pages
 
-if exists('g:loaded_viewdoc_infman') || &cp || version < 700
+if exists('g:loaded_viewdoc_infman') || &cp || v:version < 700
 	finish
 endif
 let g:loaded_viewdoc_infman = 1
@@ -68,7 +68,7 @@ let g:ViewDoc_limbo  = function(s:SID().'ViewDoc_infman')
 " Autocomplete command in section:	2 tim	2 ti.*e
 function s:CompleteInfman(ArgLead, CmdLine, CursorPos)
 	call ViewDoc_SetShellToBash()
-	if strpart(a:CmdLine, a:CursorPos - 1) == '('
+	if strpart(a:CmdLine, a:CursorPos - 1) ==# '('
 		let m = matchlist(a:CmdLine, '\s\(\S\+\)($')
 		if !len(m)
 			call ViewDoc_RestoreShell()

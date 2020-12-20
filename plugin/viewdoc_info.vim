@@ -6,7 +6,7 @@
 " URL:                  see in viewdoc.vim
 " Description: ViewDoc handler for GNU info
 
-if exists('g:loaded_viewdoc_info') || &cp || version < 700
+if exists('g:loaded_viewdoc_info') || &cp || v:version < 700
 	finish
 endif
 let g:loaded_viewdoc_info = 1
@@ -49,32 +49,32 @@ function s:ViewDoc_info(topic, filetype, synid, ctx)
 		" patterns below contain some empty groups \(\), this is intentional,
 		" because we want to have link parts in the same groups, no matte whet
 		" format the link has
-		if synIDattr(a:synid, 'name') == 'infoNavLink'
+		if synIDattr(a:synid, 'name') ==# 'infoNavLink'
 			" links in the top navigation line
 			let nav_match = matchlist(getline('.')[:col('.')], '^File:.*\(Prev\|Next\|Up\): \(.\)')
 			let nav = nav_match[1]
-			if nav_match[2] == '('
+			if nav_match[2] ==# '('
 				let pattern = '^File: .*' . nav . ': \([^,]*\)\(\)\(\)'
 			else
 				let pattern = '^File: .*' . nav . ': \(\)\([^,]*\)\(\)'
 			endif
-		elseif synIDattr(a:synid, 'name') == 'infoLinkDir' ||
-		\      synIDattr(a:synid, 'name') == 'infoDirTarget'
+		elseif synIDattr(a:synid, 'name') ==# 'infoLinkDir' ||
+		\      synIDattr(a:synid, 'name') ==# 'infoDirTarget'
 			" links in main directory
 			let pattern = '^\* [^:]\+: \(([^)]\+)\)\([^.]*\)\.\(\)'
-		elseif synIDattr(a:synid, 'name') == 'infoLinkMenu'
+		elseif synIDattr(a:synid, 'name') ==# 'infoLinkMenu'
 			" links in standard menu
 			let pattern = '^\* \(\)\([^:]*\)::\(\)'
-		elseif synIDattr(a:synid, 'name') == 'infoLinkIndex' ||
-		\      synIDattr(a:synid, 'name') == 'infoIndexTarget' ||
-		\      synIDattr(a:synid, 'name') == 'infoIndexLine'
+		elseif synIDattr(a:synid, 'name') ==# 'infoLinkIndex' ||
+		\      synIDattr(a:synid, 'name') ==# 'infoIndexTarget' ||
+		\      synIDattr(a:synid, 'name') ==# 'infoIndexLine'
 			" links in index page -- sometimes line number is wrapped to next line,
 			" so we concatenate it if current line alone doesn't match
 			let pattern = '^\* [^:]\+:\s*\(\)\([^.]\+\)\.\s*(line\s\+\([0-9]\+\))$'
-			if matchstr(current_line, pattern) == ''
+			if matchstr(current_line, pattern) ==# ''
 				let current_line = current_line.' '.getline(line('.') + 1)
 			endif
-		elseif synIDattr(a:synid, 'name') == 'infoLinkNote'
+		elseif synIDattr(a:synid, 'name') ==# 'infoLinkNote'
 			" "note" links inside pages, these can span multiple lines
 			if match(current_line, '\*[Nn]ote') < 0
 				let prev_line = getline(line('.') - 1)
@@ -96,12 +96,12 @@ function s:ViewDoc_info(topic, filetype, synid, ctx)
 		endif
 		let link = matchlist(current_line, pattern)
 		let file = same_file
-		if link[1] != ''
+		if link[1] !=# ''
 			let file = s:FixNodeName(link[1])
 		endif
-		let node = link[2] != '' ? link[2] : 'Top'
+		let node = link[2] !=# '' ? link[2] : 'Top'
 		let h.topic = file . node
-		if link[3] != ''
+		if link[3] !=# ''
 			let h.line = str2nr(link[3])
 		endif
 	else
@@ -139,7 +139,7 @@ function s:ViewDoc_info_search(topic, filetype, synid, ctx)
 	" search for a first matching index entry
 	if search('^\* ' . a:topic . '\W')
 		let current_line = getline('.')
-		if matchstr(current_line, pattern) == ''
+		if matchstr(current_line, pattern) ==# ''
 			let current_line = current_line.' '.getline(line('.') + 1)
 		endif
 	else
@@ -147,17 +147,17 @@ function s:ViewDoc_info_search(topic, filetype, synid, ctx)
 	endif
 	noautocmd tabclose!
 	execute 'noautocmd tabnext ' . savetabnr
-	if current_line == ''
+	if current_line ==# ''
 		" not found
 		return nothing
 	endif
 	" parse found link
 	let link = matchlist(current_line, pattern)
-	let file = link[1] !='' ? link[1] : matchstr(s:FixNodeName(indices[0]), '(.*)')
-	let node = link[2] !='' ? link[2] : 'Top'
+	let file = link[1] !=# '' ? link[1] : matchstr(s:FixNodeName(indices[0]), '(.*)')
+	let node = link[2] !=# '' ? link[2] : 'Top'
 	let h = { 'ft': 'info',
 		\ 'topic': file . node }
-	if link[3] != ''
+	if link[3] !=# ''
 		let h.line = str2nr(link[3])
 	endif
 	let h.cmd = printf('%s %s -o-', g:viewdoc_info_cmd, shellescape(h.topic, 1))
@@ -170,7 +170,7 @@ function s:ViewDoc_info_cmd(topic, ...)
 	let h = { 'ft': 'info',
 		\ 'topic': s:FixNodeName(a:topic) }
 	let h.cmd = printf('%s %s -o-', g:viewdoc_info_cmd, shellescape(h.topic, 1))
-	if h.topic == ''
+	if h.topic ==# ''
 		return nothing
 	endif
 	return h
@@ -186,7 +186,7 @@ function s:ParamsToNode(...)
 		return '(dir)Top'
 	else
 		let args = copy(a:000)
-		if args[0][0] == '('
+		if args[0][0] ==# '('
 			let args[0] = s:FixNodeName(args[0])
 		endif
 		let sh_args =  join(map(args, 'shellescape(v:val)'), ' ')
@@ -198,7 +198,7 @@ endfunction
 " Helper to fix (file) parts where manuals have versioned filenames
 function s:FixNodeName(node)
 	let file = substitute(a:node, '^(\([^)]\+\)).*', '\1', '')
-	if globpath(g:viewdoc_info_path, file.'.info*') == ''
+	if globpath(g:viewdoc_info_path, file.'.info*') ==# ''
 		let filenames = split(globpath(g:viewdoc_info_path, file.'-*.info*'))
 		let candidates = []
 		for fn in filenames
@@ -226,7 +226,7 @@ function s:CompleteInfo(ArgLead, CmdLine, CursorPos)
 			return split(escape(system(base_cmd . keys_pipe), ' '), "\n")
 		endif
 		let pipe = keys_pipe
-		if lead[0] == '('
+		if lead[0] ==# '('
 			let pipe = ' | sed -n ''s/\* [^:]*: \(([^.]*\)\..*/\1/p'' | sort | uniq'
 		endif
 	else
@@ -234,7 +234,7 @@ function s:CompleteInfo(ArgLead, CmdLine, CursorPos)
 		let args = join(map(trail, 'shellescape(v:val)'), ' ')
 		let base_cmd = substitute(base_cmd, "'(dir)Top'", args, '')
 	endif
-	return split(escape(system(base_cmd . pipe . " | sed -n " . shellescape("/^" . lead . "/Ip")), ' '), "\n")
+	return split(escape(system(base_cmd . pipe . ' | sed -n ' . shellescape('/^' . lead . '/Ip')), ' '), "\n")
 endfunction
 
 

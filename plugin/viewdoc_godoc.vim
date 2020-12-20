@@ -5,7 +5,7 @@
 " URL:			see in viewdoc.vim
 " Description: ViewDoc handler for godoc
 
-if exists('g:loaded_viewdoc_godoc') || &cp || version < 700
+if exists('g:loaded_viewdoc_godoc') || &cp || v:version < 700
 	finish
 endif
 let g:loaded_viewdoc_godoc = 1
@@ -67,11 +67,11 @@ function s:ViewDoc_go(topic, filetype, synid, ctx)
 	endif
 
 	if !len(words)
-		let pkg = ""
-		let sym = ""
+		let pkg = ''
+		let sym = ''
 	elseif len(words) == 1
 		let pkg = words[0]
-		let sym = ""
+		let sym = ''
 	else
 		let pkg = words[0]
 		let sym = words[1]
@@ -82,7 +82,7 @@ function s:ViewDoc_go(topic, filetype, synid, ctx)
 		let pkg = packages[pkg]
 	endif
 
-	if sym != ""
+	if sym !=# ''
 		let h.search = '^func '.sym.'(\|^type '.sym.'\|\%(const\|var\|type\|\s\+\) '.pkg.'\s\+=\s'
 	else
 		let h.search = '\%(const\|var\|type\|\s\+\) '.pkg.'\s\+=\s'

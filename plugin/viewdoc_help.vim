@@ -5,7 +5,7 @@
 " URL:			see in viewdoc.vim
 " Description: ViewDoc handler for vim help files
 
-if exists('g:loaded_viewdoc_help') || &cp || version < 700
+if exists('g:loaded_viewdoc_help') || &cp || v:version < 700
 	finish
 endif
 let g:loaded_viewdoc_help = 1
@@ -30,7 +30,7 @@ function s:ViewDoc_help(topic, filetype, synid, ctx)
 		\ 'topic':	a:topic,
 		\ }
 	if a:ctx
-		if h.topic !~ "^'.*'$" && (synIDattr(a:synid,'name') =~# 'Option' || search('&\k*\%#','n'))
+		if h.topic !~# "^'.*'$" && (synIDattr(a:synid,'name') =~# 'Option' || search('&\k*\%#','n'))
 			" auto-detect: 'option'
 			let matched = matchstr(h.topic, "'\\k\\+'")
 			if len(matched)
@@ -38,7 +38,7 @@ function s:ViewDoc_help(topic, filetype, synid, ctx)
 			else
 				let h.topic = "'" . h.topic . "'"
 			endif
-		elseif synIDattr(a:synid,'name') =~ 'Command'
+		elseif synIDattr(a:synid,'name') =~# 'Command'
 			let h.topic = ':' . h.topic		" auto-detect: :command
 		endif
 	endif

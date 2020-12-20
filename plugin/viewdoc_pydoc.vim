@@ -5,7 +5,7 @@
 " URL:			see in viewdoc.vim
 " Description: ViewDoc handler for pydoc
 
-if exists('g:loaded_viewdoc_pydoc') || &cp || version < 700
+if exists('g:loaded_viewdoc_pydoc') || &cp || v:version < 700
 	finish
 endif
 let g:loaded_viewdoc_pydoc = 1

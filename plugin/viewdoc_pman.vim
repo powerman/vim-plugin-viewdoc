@@ -5,7 +5,7 @@
 " URL:			see in viewdoc.vim
 " Description: ViewDoc handler for php man pages
 
-if exists('g:loaded_viewdoc_pman') || &cp || version < 700
+if exists('g:loaded_viewdoc_pman') || &cp || v:version < 700
 	finish
 endif
 let g:loaded_viewdoc_pman = 1
@@ -68,12 +68,12 @@ let g:ViewDoc_php  = function(s:SID().'ViewDoc_pman')
 function s:CompleteMan(ArgLead, CmdLine, CursorPos)
 	call ViewDoc_SetShellToBash()
 	let manpath = substitute(system(printf('%s --path', g:viewdoc_pman_cmd)),'\n$','','')
-	if manpath =~ ':'
+	if manpath =~# ':'
 		let manpath = '{'.join(map(split(manpath,':'),'shellescape(v:val,1)'),',').'}'
 	else
 		let manpath = shellescape(manpath,1)
 	endif
-	if strpart(a:CmdLine, a:CursorPos - 1) == '('
+	if strpart(a:CmdLine, a:CursorPos - 1) ==# '('
 		let m = matchlist(a:CmdLine, '\s\(\S\+\)($')
 		if !len(m)
 			call ViewDoc_RestoreShell()
