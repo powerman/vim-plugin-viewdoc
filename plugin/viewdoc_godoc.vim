@@ -83,7 +83,7 @@ function s:ViewDoc_go(topic, filetype, synid, ctx)
 	endif
 
 	if sym !=# ''
-		let h.search = '^func '.sym.'(\|^type '.sym.'\|\%(const\|var\|type\|\s\+\) '.pkg.'\s\+=\s'
+		let h.search = '^func '.sym.'[[(]\|^type '.sym.'\|\%(const\|var\|type\|\s\+\) '.pkg.'\s\+=\s'
 	else
 		let h.search = '\%(const\|var\|type\|\s\+\) '.pkg.'\s\+=\s'
 	endif
