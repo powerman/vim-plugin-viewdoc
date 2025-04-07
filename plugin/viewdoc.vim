@@ -132,7 +132,7 @@ function ViewDoc(target, topic, ...)
 
 	let b:topic = h.topic
 	if exists('h.tags')
-		execute 'setlocal tags^=' . h.tags
+        execute "setlocal tags^=" . substitute( h.tags, ' ', '\\ ', "g" )
 	endif
 	if exists('h.docft')
 		let b:docft = h.docft
