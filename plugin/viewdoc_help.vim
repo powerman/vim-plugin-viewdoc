@@ -51,6 +51,7 @@ function s:ViewDoc_help(topic, filetype, synid, ctx)
 		let h.line	= line('.')
 		let h.col	= col('.')
 		let h.tags	= substitute(helpfile, '/[^/]*$', '/tags', '')
+		let h.tags	= substitute( h.tags, ' ', '\\ ', "g" )
 		noautocmd tabclose
 		execute 'noautocmd tabnext ' . savetabnr
 	catch
