@@ -85,7 +85,7 @@ function s:ViewDoc_help_custom(topic, ft, ...)
 			let h.cmd	= printf('cat %s', shellescape(helpfile,1))
 			let h.line	= line('.')
 			let h.col	= col('.')
-			let h.tags	= tagsfile
+			let h.tags	= substitute( tagsfile, ' ', '\\ ', "g" )
 			break
 		endfor
 		setlocal bufhidden=delete
